@@ -1,23 +1,24 @@
 {
+  "$schema": "./input.schema.json",
   "nodes": [
-    {"id": 1, "dx": "1/2", "dy": "1"},
-    {"id": 2, "dx": "0", "dy": "2/3"},
-    {"id": 3, "dx": "0", "dy": "1/3"},
-    {"id": 4, "dx": "1/4", "dy": "1/3"},
-    {"id": 5, "dx": "3/4", "dy": "2/3"},
-    {"id": 6, "dx": "1", "dy": "2/3"},
-    {"id": 7, "dx": "1", "dy": "1/3"},
-    {"id": 8, "dx": "1/2", "dy": "0"}
+    { "id": 1, "dx": "1/2", "dy": "1", "loads": {"y": -10}, "constraints": "x" },
+    { "id": 2, "dx": "0", "dy": "2/3", "constraints": "xy" },
+    { "id": 3, "dx": "0", "dy": "1/3", "constraints": "xy" },
+    { "id": 4, "dx": "1/4", "dy": "1/3", "loads": {"y": -5} },
+    { "id": 5, "dx": "3/4", "dy": "2/3", "deformations": {"x": 0.01}, "constraints": "x" },
+    { "id": 6, "dx": "1", "dy": "2/3", "constraints": "xy" },
+    { "id": 7, "dx": "1", "dy": "1/3", "constraints": "x" },
+    { "id": 8, "dx": "1/2", "dy": "0", "constraints": "x", "loads": {"x": 2} }
   ],
   "elements": [
-    {"id": 1, "starting_node": 1, "ending_node": 2},
-    {"id": 2, "starting_node": 2, "ending_node": 4},
-    {"id": 3, "starting_node": 4, "ending_node": 3},
-    {"id": 4, "starting_node": 4, "ending_node": 8},
-    {"id": 5, "starting_node": 8, "ending_node": 7},
-    {"id": 6, "starting_node": 7, "ending_node": 5},
-    {"id": 7, "starting_node": 5, "ending_node": 6},
-    {"id": 8, "starting_node": 5, "ending_node": 1},
-    {"id": 9, "starting_node": 5, "ending_node": 4}
+    { "id": 1, "starting_node": 1, "ending_node": 2 },
+    { "id": 2, "starting_node": 2, "ending_node": 4 },
+    { "id": 3, "starting_node": 4, "ending_node": 3 },
+    { "id": 4, "starting_node": 4, "ending_node": 8 },
+    { "id": 5, "starting_node": 8, "ending_node": 7 },
+    { "id": 6, "starting_node": 7, "ending_node": 5 },
+    { "id": 7, "starting_node": 5, "ending_node": 6 },
+    { "id": 8, "starting_node": 5, "ending_node": 1 },
+    { "id": 9, "starting_node": 5, "ending_node": 4 }
   ]
 }
