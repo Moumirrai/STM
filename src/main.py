@@ -1,6 +1,4 @@
 import json
-import matplotlib.pyplot as plt
-import numpy as np
 
 from models import Node, Element, TrussData
 
@@ -12,11 +10,15 @@ def load_data(file_path: str) -> TrussData:
     with open(file_path) as f:
         data = json.load(f)
 
-    nodes = {}
+    totlal_constraints = 0
+
+    nodes = []
     for node_data in data["nodes"]:
         constraints = node_data.get("constraints", "")
         constrained_x = "x" in constraints
         constrained_y = "y" in constraints
+
+        totlal_constraints += int(constrained_x) + int(constrained_y)
 
         deformations = node_data.get("deformations", {})
         deformation_x = deformations.get("x", 0.0)
@@ -27,7 +29,6 @@ def load_data(file_path: str) -> TrussData:
         load_y = loads.get("y", 0.0)
 
         node = Node(
-            id=node_data["id"],
             dx=eval(node_data["dx"]),
             dy=eval(node_data["dy"]),
             constrained_x=constrained_x,
@@ -38,31 +39,24 @@ def load_data(file_path: str) -> TrussData:
             load_y=load_y,
         )
 
-        nodes[node.id] = node
-
+        nodes.append(node)
 
     elements = [
         Element(
-            starting_node=element["starting_node"], ending_node=element["ending_node"]
+            nodes=(
+                nodes[int(element["starting_node"])],
+                nodes[int(element["ending_node"])],
+            ),
         )
         for element in data["elements"]
     ]
-    return TrussData(
-        nodes,
-        elements
-    )
+    print(f"Total constraints: {totlal_constraints}")
+    return TrussData(nodes, elements, totlal_constraints)
 
 
 truss: TrussData = load_data("./data/input.json")
 
 render_truss_structure(truss)
-
 solver = TrussSolver(truss)
 
 solver.solve()
-
-""" print(
-    f"First element has cos: {truss.elements[0].cos} and sin: {truss.elements[0].sin}"
-)
-print("Stiffness matrix of the first element:")
-print(truss.elements[0].stiffness_matrix) """

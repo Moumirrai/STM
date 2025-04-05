@@ -1,0 +1,24 @@
+{
+  "$schema": "./input.schema.json",
+  "nodes": [
+    { "dx": "1/2", "dy": "1", "loads": {"y": -10}, "constraints": "x" },
+    { "dx": "0", "dy": "2/3", "constraints": "xy" },
+    { "dx": "0", "dy": "1/3", "constraints": "xy" },
+    { "dx": "1/4", "dy": "1/3", "loads": {"y": 5} },
+    { "dx": "3/4", "dy": "2/3", "deformations": {"x": 0.01}, "constraints": "x" },
+    { "dx": "1", "dy": "2/3", "constraints": "xy" },
+    { "dx": "1", "dy": "1/3", "constraints": "x" },
+    { "dx": "1/2", "dy": "0", "constraints": "x", "loads": {"x": 2} }
+  ],
+  "elements": [
+    { "starting_node": 0, "ending_node": 1 },
+    { "starting_node": 1, "ending_node": 3 },
+    { "starting_node": 3, "ending_node": 2 },
+    { "starting_node": 3, "ending_node": 7 },
+    { "starting_node": 7, "ending_node": 6 },
+    { "starting_node": 6, "ending_node": 4 },
+    { "starting_node": 4, "ending_node": 5 },
+    { "starting_node": 4, "ending_node": 0 },
+    { "starting_node": 4, "ending_node": 3 }
+  ]
+}
