@@ -1,9 +1,11 @@
 import json
-
+import argparse
+import os
 from models import Node, Element, TrussData
 
-from plotter import render_truss_structure
+from plotter import render_truss_structure, visualise_axial_forces
 from solver import TrussSolver
+
 
 
 def load_data(file_path: str) -> TrussData:
@@ -54,9 +56,34 @@ def load_data(file_path: str) -> TrussData:
     return TrussData(nodes, elements, totlal_constraints)
 
 
-truss: TrussData = load_data("./data/input.json")
+# Argument parser
+parser = argparse.ArgumentParser(description="Solve a truss structure from privided JSON file")
 
-render_truss_structure(truss)
+parser.add_argument(
+    "file_path", 
+    type=str, 
+    nargs='?',
+    default="./data/default.json",
+    help="Path to the input JSON"
+)
+
+args = parser.parse_args()
+input_file_path = args.file_path
+
+if not os.path.exists(input_file_path):
+    print(f"Error: Input file not found at '{input_file_path}'")
+    exit(1)
+
+print(f"Loading data from: {input_file_path}")
+truss: TrussData = load_data(input_file_path)
+
+
+#render_truss_structure(truss)
+
 solver = TrussSolver(truss)
 
 solver.solve()
+
+visualise_axial_forces(truss)
+
+exit(0)

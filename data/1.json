@@ -2,9 +2,9 @@
   "$schema": "./input.schema.json",
   "nodes": [
     { "dx": "-3", "dy": "0", "constraints": "xy" },
-    { "dx": "0", "dy": "0" },
+    { "dx": "0", "dy": "0"},
     { "dx": "3", "dy": "0", "constraints": "y" },
-    { "dx": "0", "dy": "-2", "loads": {"x": -7} }
+    { "dx": "0", "dy": "-2", "loads": {"x": -55} }
   ],
   "elements": [
     { "starting_node": 0, "ending_node": 1 },

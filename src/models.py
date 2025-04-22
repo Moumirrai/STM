@@ -17,6 +17,7 @@ class Node:
     load_y: float = 0.0
     dof_x: Optional[int] = None
     dof_y: Optional[int] = None
+    local_deformations: Optional[np.ndarray] = None
 
 
 @dataclass
@@ -64,25 +65,23 @@ class Element:
         local_matrix = np.array([[uu, uw], [uw, ww]])
 
         return np.block([[local_matrix, -local_matrix], [-local_matrix, local_matrix]])
-    
-    def calculate_forces_from_deformations( #this is just for testing, it should be rewritten later
-        self, deformations: csc_array
-    ) -> np.ndarray:
-        cos, sin = self.getCosSin()
 
-        local_deformations = np.zeros(len(self.nodes) * 2, dtype=float)
+    def set_local_deformations(self, deformations: csc_array) -> np.ndarray:
+
+        self.local_deformations = np.zeros(len(self.nodes) * 2, dtype=float)
 
         for i, node in enumerate(self.nodes):
-            if node.dof_x < deformations.shape[0]:
-                local_deformations[i * 2] = deformations[node.dof_x]
+            if node.dof_x < deformations.shape[0]: # if dof is free
+                self.local_deformations[i * 2] = deformations[node.dof_x]
             if node.dof_y < deformations.shape[0]:
-                local_deformations[i * 2 + 1] = deformations[node.dof_y]
+                self.local_deformations[i * 2 + 1] = deformations[node.dof_y]
 
+    def axial_force(self) -> float:
+        cos, sin = self.getCosSin()
         stiffness_matrix = self.stiffness()
-        forces = stiffness_matrix @ local_deformations
+        forces = stiffness_matrix @ self.local_deformations
         normal_force = np.dot(forces[2:], np.array([cos, sin]))
-        print(f"Normal force: {normal_force}")
-        return forces
+        return normal_force
 
 
 @dataclass

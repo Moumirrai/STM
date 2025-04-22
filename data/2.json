@@ -1,0 +1,31 @@
+{
+  "$schema": "./input.schema.json",
+  "nodes": [
+    { "dx": "-4", "dy": "0", "constraints": "xy" },
+    { "dx": "-2", "dy": "0", "loads": {"y": 1000}},
+    { "dx": "0", "dy": "0", "constraints": "xy" },
+    { "dx": "2", "dy": "0" },
+    { "dx": "4", "dy": "0", "constraints": "xy" },
+    { "dx": "3", "dy": "-1.5", "loads": {"x": 500} },
+    { "dx": "1", "dy": "-1.5"},
+    { "dx": "-1", "dy": "-1.5" },
+    { "dx": "-3", "dy": "-1.5" }
+  ],
+  "elements": [
+    { "starting_node": 0, "ending_node": 1 },
+    { "starting_node": 1, "ending_node": 2 },
+    { "starting_node": 2, "ending_node": 3 },
+    { "starting_node": 3, "ending_node": 4 },
+    { "starting_node": 4, "ending_node": 5 },
+    { "starting_node": 5, "ending_node": 6 },
+    { "starting_node": 6, "ending_node": 7 },
+    { "starting_node": 7, "ending_node": 8 },
+    { "starting_node": 3, "ending_node": 5 },
+    { "starting_node": 3, "ending_node": 6 },
+    { "starting_node": 2, "ending_node": 6 },
+    { "starting_node": 2, "ending_node": 7 },
+    { "starting_node": 1, "ending_node": 7 },
+    { "starting_node": 1, "ending_node": 8 },
+    { "starting_node": 0, "ending_node": 8 }
+  ]
+}

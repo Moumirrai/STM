@@ -1,0 +1,13 @@
+version: '3'
+
+tasks:
+  run:
+    desc: Runs the main python script, optionally with a data file.
+    cmds:
+      - >
+        {{if .CLI_ARGS}}
+        python ./src/main.py data/{{.CLI_ARGS}}.json
+        {{else}}
+        python ./src/main.py
+        {{end}}
+    silent: true

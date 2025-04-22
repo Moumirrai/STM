@@ -1,74 +1,66 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Truss Data",
-    "description": "Schema for truss structure with nodes and elements",
-    "type": "object",
-    "required": ["nodes", "elements"],
-    "properties": {
-      "nodes": {
-        "type": "array",
-        "description": "Array of nodes in the truss",
-        "items": {
-          "type": "object",
-          "required": ["id", "dx", "dy"],
-          "properties": {
-            "id": {
-              "type": "integer",
-              "description": "Unique identifier for the node"
-            },
-            "dx": {
-              "type": "string",
-              "description": "X coordinate as mathematical expression"
-            },
-            "dy": {
-              "type": "string",
-              "description": "Y coordinate as mathematical expression"
-            },
-            "constraints": {
-              "type": "string",
-              "description": "Node constraints: 'x', 'y', or 'xy'",
-              "pattern": "^[xy]{1,2}$"
-            },
-            "deformations": {
-              "type": "object",
-              "description": "Initial deformations",
-              "properties": {
-                "x": {"type": "number", "description": "Initial deformation in x-direction"},
-                "y": {"type": "number", "description": "Initial deformation in y-direction"}
-              }
-            },
-            "loads": {
-              "type": "object",
-              "description": "Applied loads",
-              "properties": {
-                "x": {"type": "number", "description": "Force applied in x-direction"},
-                "y": {"type": "number", "description": "Force applied in y-direction"}
-              }
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Truss Data",
+  "description": "Schema for truss structure with nodes and elements",
+  "type": "object",
+  "required": ["nodes", "elements"],
+  "properties": {
+    "nodes": {
+      "type": "array",
+      "description": "Array of nodes in the truss. The index in the array implicitly defines the node ID.",
+      "items": {
+        "type": "object",
+        "required": ["dx", "dy"],
+        "properties": {
+          "dx": {
+            "type": "string",
+            "description": "X coordinate as mathematical expression or number"
+          },
+          "dy": {
+            "type": "string",
+            "description": "Y coordinate as mathematical expression or number"
+          },
+          "constraints": {
+            "type": "string",
+            "description": "Node constraints: 'x', 'y', or 'xy'",
+            "pattern": "^[xy]{1,2}$"
+          },
+          "deformations": {
+            "type": "object",
+            "description": "Initial deformations",
+            "properties": {
+              "x": {"type": "number", "description": "Initial deformation in x-direction"},
+              "y": {"type": "number", "description": "Initial deformation in y-direction"}
+            }
+          },
+          "loads": {
+            "type": "object",
+            "description": "Applied loads",
+            "properties": {
+              "x": {"type": "number", "description": "Force applied in x-direction"},
+              "y": {"type": "number", "description": "Force applied in y-direction"}
             }
           }
         }
-      },
-      "elements": {
-        "type": "array",
-        "description": "Array of elements connecting nodes",
-        "items": {
-          "type": "object",
-          "required": ["id", "starting_node", "ending_node"],
-          "properties": {
-            "id": {
-              "type": "integer",
-              "description": "Unique identifier for the element"
-            },
-            "starting_node": {
-              "type": "integer",
-              "description": "ID of the starting node"
-            },
-            "ending_node": {
-              "type": "integer",
-              "description": "ID of the ending node"
-            }
+      }
+    },
+    "elements": {
+      "type": "array",
+      "description": "Array of elements connecting nodes. The index in the array implicitly defines the element ID.",
+      "items": {
+        "type": "object",
+        "required": ["starting_node", "ending_node"],
+        "properties": {
+          "starting_node": {
+            "type": "integer",
+            "description": "Index (ID) of the starting node from the 'nodes' array"
+          },
+          "ending_node": {
+            "type": "integer",
+            "description": "Index (ID) of the ending node from the 'nodes' array"
           }
         }
       }
     }
   }
+}
