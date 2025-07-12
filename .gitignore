@@ -18,3 +18,4 @@ __pycache__/
 pip-log.txt
 pip-wheel-metadata/
 poetry.lock
+src/*.vtk

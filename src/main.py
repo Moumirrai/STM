@@ -5,7 +5,7 @@ from models import Node, Element, TrussData
 
 from plotter import render_truss_structure, visualise_axial_forces
 from solver import TrussSolver
-
+from src.plotter import export_vtk
 
 
 def load_data(file_path: str) -> TrussData:
@@ -63,7 +63,7 @@ parser.add_argument(
     "file_path", 
     type=str, 
     nargs='?',
-    default="./data/default.json",
+    default="../data/default.json",
     help="Path to the input JSON"
 )
 
@@ -84,6 +84,7 @@ solver = TrussSolver(truss)
 
 solver.solve()
 
-visualise_axial_forces(truss)
+#visualise_axial_forces(truss)
+export_vtk(truss)
 
 exit(0)

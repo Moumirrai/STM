@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 import matplotlib.colors as matcolor
+import numpy as np
+
 from models import TrussData
+import pyvista as pv
 
 
 def render_truss_structure(truss: TrussData):
@@ -67,3 +70,27 @@ def visualise_axial_forces(truss: TrussData):
     fig.tight_layout()
 
     plt.show()
+
+def export_vtk(truss: TrussData):
+    points = np.array([[node.dx, node.dy, 0.0] for node in truss.nodes])
+    forces = np.array([element.axial_force() for element in truss.elements])
+    deformations = np.array(
+        [[element.local_deformations[0], element.local_deformations[1], 0.0] for element in truss.elements])
+
+    # Each line: [2, a, b]
+    lines = []
+    for element in truss.elements:
+        a = truss.nodes.index(element.nodes[0])
+        b = truss.nodes.index(element.nodes[1])
+        lines.append([2, a, b])
+    lines = np.array(lines, dtype=int).flatten()
+
+    poly = pv.PolyData()
+    poly.points = points
+    poly.lines = lines
+
+    # Now, poly.n_lines == len(truss.elements)
+    poly.cell_data['axial_force'] = forces
+    poly.cell_data['deformation'] = deformations[:, 0]
+
+    poly.save("test.vtk")
