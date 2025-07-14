@@ -27,12 +27,13 @@ def visualise_axial_forces(truss: TrussData):
     axial_forces: list[float] = [0.0] * len(truss.elements)
     for i, element in enumerate(truss.elements):
         axial_forces[i] = element.axial_force()
-    
+
     min_axial_force = min(axial_forces)
     max_axial_force = max(axial_forces)
 
     if (min_axial_force == max_axial_force):
-        norm = matcolor.Normalize(vmin=min_axial_force - 0.1, vmax=max_axial_force + 0.1) # add a small range to avoid zero division
+        norm = matcolor.Normalize(vmin=min_axial_force - 0.1,
+                                  vmax=max_axial_force + 0.1)  # add a small range to avoid zero division
     else:
         norm = matcolor.Normalize(vmin=min_axial_force, vmax=max_axial_force)
 
@@ -40,7 +41,7 @@ def visualise_axial_forces(truss: TrussData):
     sm = plt.cm.ScalarMappable(cmap=colormap, norm=norm)
     sm.set_array([])
 
-    fig, ax = plt.subplots() 
+    fig, ax = plt.subplots()
 
     for i, element in enumerate(truss.elements):
         force = axial_forces[i]
@@ -71,26 +72,26 @@ def visualise_axial_forces(truss: TrussData):
 
     plt.show()
 
+
 def export_vtk(truss: TrussData):
     points = np.array([[node.dx, node.dy, 0.0] for node in truss.nodes])
     forces = np.array([element.axial_force() for element in truss.elements])
-    deformations = np.array(
-        [[element.local_deformations[0], element.local_deformations[1], 0.0] for element in truss.elements])
 
-    # Each line: [2, a, b]
     lines = []
+    displacements = np.zeros((len(points), 3), dtype=float)
     for element in truss.elements:
         a = truss.nodes.index(element.nodes[0])
         b = truss.nodes.index(element.nodes[1])
         lines.append([2, a, b])
+        deformation = element.local_deformations
+        displacements[a] = [deformation[0], deformation[1], 0]
+        displacements[b] = [deformation[2], deformation[3], 0]
     lines = np.array(lines, dtype=int).flatten()
 
     poly = pv.PolyData()
     poly.points = points
     poly.lines = lines
-
-    # Now, poly.n_lines == len(truss.elements)
     poly.cell_data['axial_force'] = forces
-    poly.cell_data['deformation'] = deformations[:, 0]
+    poly.cell_data['deformation'] = displacements[:, 0]
 
-    poly.save("test.vtk")
+    poly.save("test.vtp", binary=True)

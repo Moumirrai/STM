@@ -5,7 +5,7 @@ from models import Node, Element, TrussData
 
 from plotter import render_truss_structure, visualise_axial_forces
 from solver import TrussSolver
-from src.plotter import export_vtk
+from plotter import export_vtk
 
 
 def load_data(file_path: str) -> TrussData:

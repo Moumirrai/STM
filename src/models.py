@@ -25,6 +25,7 @@ class Element:
     nodes: tuple[Node, Node]
     E: float = 210e6
     A: float = 0.01
+    local_deformations: Optional[np.ndarray] = None
 
     def DOFs(self) -> List[int]:
         dofs = []
