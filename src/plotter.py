@@ -92,6 +92,6 @@ def export_vtk(truss: TrussData):
     poly.points = points
     poly.lines = lines
     poly.cell_data['axial_force'] = forces
-    poly.cell_data['deformation'] = displacements[:, 0]
+    poly.point_data['displacement'] = displacements
 
     poly.save("test.vtp", binary=True)
