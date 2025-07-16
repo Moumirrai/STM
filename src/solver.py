@@ -9,7 +9,7 @@ A = 0.01  # m^2
 class TrussSolver:
 
     def __init__(
-        self, truss: TrussData, young_modulus: float = 210e6, area: float = 0.01
+            self, truss: TrussData, young_modulus: float = 210e6, area: float = 0.01
     ):
         self.truss = truss
         self.K = None  # global stiffness matrix
@@ -38,15 +38,15 @@ class TrussSolver:
         free_dof_counter = 0
         total_free_dof_count = total_dof_count - self.truss.constrained_dofs_count
 
-        fixed_dof_counter = total_free_dof_count # no need to add 1 since free dof counter starts from 0
+        fixed_dof_counter = total_free_dof_count  # no need to add 1 since free dof counter starts from 0
 
-        S = np.zeros((total_free_dof_count), dtype=float)
+        S = np.zeros(total_free_dof_count, dtype=float)
 
-        r = np.zeros((total_free_dof_count), dtype=float)
+        r = np.zeros(total_free_dof_count, dtype=float)
 
         # create a mapping of dof IDs
         for i, node in enumerate(self.truss.nodes):
-            node_dof_id = i * 2 
+            node_dof_id = i * 2
 
             if not node.constrained_x:
                 node.dof_x = free_dof_counter
@@ -61,7 +61,6 @@ class TrussSolver:
 
                 self.DOFIDS[node_dof_id] = fixed_dof_counter
                 fixed_dof_counter += 1
-                
 
             if not node.constrained_y:
                 node.dof_y = free_dof_counter
@@ -80,11 +79,9 @@ class TrussSolver:
                 )
                 fixed_dof_counter += 1
 
-            
-
-        # we well use the row-based list of lists sparse matrix for initial construction
+        # we will use the row-based list of lists sparse matrix for initial construction
         # and then convert it to csr format for more efficient operations
-        lil_K = lil_matrix((free_dof_counter, free_dof_counter), dtype=float)
+        lil_k = lil_matrix((free_dof_counter, free_dof_counter), dtype=float)
 
         for element in self.truss.elements:
             stiffness_matrix = element.stiffness()
@@ -96,12 +93,12 @@ class TrussSolver:
                 if row_dof < free_dof_counter:  # skip constrained dofs
                     for j, col_dof in enumerate(dofs):
                         if col_dof < free_dof_counter:  # skip constrained dofs
-                            lil_K[row_dof, col_dof] += stiffness_matrix[i, j]
+                            lil_k[row_dof, col_dof] += stiffness_matrix[i, j]
 
-        #print("S", S)
+        # print("S", S)
 
         self.K = (
-            lil_K.tocsr()
+            lil_k.tocsr()
         )  # convert to compressed sparse row format for more efficient operations
 
         u_free = linalg.spsolve(self.K, S)
@@ -109,8 +106,8 @@ class TrussSolver:
         for element in self.truss.elements:
             element.set_local_deformations(u_free)
 
-        #self.check_stability()
+        # self.check_stability()
 
-        #print(self.K.toarray())
+        # print(self.K.toarray())
 
         pass

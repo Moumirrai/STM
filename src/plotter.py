@@ -31,7 +31,7 @@ def visualise_axial_forces(truss: TrussData):
     min_axial_force = min(axial_forces)
     max_axial_force = max(axial_forces)
 
-    if (min_axial_force == max_axial_force):
+    if min_axial_force == max_axial_force:
         norm = matcolor.Normalize(vmin=min_axial_force - 0.1,
                                   vmax=max_axial_force + 0.1)  # add a small range to avoid zero division
     else:
@@ -74,24 +74,19 @@ def visualise_axial_forces(truss: TrussData):
 
 
 def export_vtk(truss: TrussData):
+    # convert nodes and deformations to Vec3
     points = np.array([[node.dx, node.dy, 0.0] for node in truss.nodes])
+    displacements = np.array([[node.local_deformations[0], node.local_deformations[1], 0.0] for node in truss.nodes])
+
     forces = np.array([element.axial_force() for element in truss.elements])
 
-    lines = []
-    displacements = np.zeros((len(points), 3), dtype=float)
-    for element in truss.elements:
-        a = truss.nodes.index(element.nodes[0])
-        b = truss.nodes.index(element.nodes[1])
-        lines.append([2, a, b])
-        deformation = element.local_deformations
-        displacements[a] = [deformation[0], deformation[1], 0]
-        displacements[b] = [deformation[2], deformation[3], 0]
-    lines = np.array(lines, dtype=int).flatten()
+    # create lines from elements, 2 specifies number of points per line
+    lines = np.array([[2, element.nodes[0].index, element.nodes[1].index] for element in truss.elements]).flatten()
 
     poly = pv.PolyData()
     poly.points = points
     poly.lines = lines
-    poly.cell_data['axial_force'] = forces
     poly.point_data['displacement'] = displacements
+    poly.cell_data['axial_force'] = forces
 
-    poly.save("test.vtp", binary=True)
+    poly.save("new.vtp", binary=True)
