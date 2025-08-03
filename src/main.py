@@ -1,12 +1,15 @@
 import json
 import argparse
 import os
-from models import Node, Element, TrussData
+from typing import List
+
+from models import Node, Element, TrussData, Dependency
 import time
 
 from plotter import render_truss_structure, visualise_axial_forces
 from solver import TrussSolver
 from plotter import export_vtk
+from src.models import MasterNode
 
 
 def load_data(file_path: str) -> TrussData:
@@ -15,7 +18,7 @@ def load_data(file_path: str) -> TrussData:
 
     total_constraints = 0
 
-    nodes = []
+    nodes: List[Node] = []
     for i, node_data in enumerate(data["nodes"]):
         constraints = node_data.get("constraints", "")
         constrained_x = "x" in constraints
@@ -45,6 +48,39 @@ def load_data(file_path: str) -> TrussData:
 
         nodes.append(new_node)
 
+    dependencies = []
+    for i, dependency in enumerate(data.get("dependencies", [])):
+        node_index = dependency["node"]
+        node = nodes[node_index]
+        node.dependant = True
+
+        # Initialize dependency flags
+        node.dep_x = False
+        node.dep_y = False
+
+        if len(dependency["masters"]) == 0:
+            print(f"Warning: Dependency {i} for node {node_index} has no masters.")
+            continue
+
+        # Process masters and set dependency flags in one pass
+        masterNodes = []
+        for master_data in dependency["masters"]:
+            direction = 0 if master_data["direction"] == "x" else 1
+
+            # Set dependency flags based on direction
+            if direction == 0:
+                node.dep_x = True
+            else:
+                node.dep_y = True
+
+            masterNodes.append(MasterNode(
+                nodeIndex=master_data["node"],
+                factor=master_data["factor"],
+                direction=direction
+            ))
+
+        dependencies.append(Dependency(nodeIndex=node_index, masters=masterNodes))
+
     elements = [
         Element(
             nodes=(
@@ -55,17 +91,17 @@ def load_data(file_path: str) -> TrussData:
         for element in data["elements"]
     ]
     print(f"Total constraints: {total_constraints}")
-    return TrussData(nodes, elements, total_constraints)
+    return TrussData(nodes, elements, dependencies, total_constraints)
 
 
 # Argument parser
-parser = argparse.ArgumentParser(description="Solve a truss structure from privided JSON file")
+parser = argparse.ArgumentParser(description="Solve a truss structure from provided JSON file")
 
 parser.add_argument(
     "file_path",
     type=str,
     nargs='?',
-    default="../data/default.json",
+    default="./data/new.json",
     help="Path to the input JSON"
 )
 

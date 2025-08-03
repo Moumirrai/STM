@@ -18,7 +18,21 @@ class Node:
     load_y: float = 0.0
     dof_x: Optional[int] = None
     dof_y: Optional[int] = None
+    dependency: Optional['Dependency'] = None
     local_deformations: Optional[np.ndarray] = None
+
+@dataclass
+class MasterNode:
+    nodeIndex: int
+    direction: int # 0 for x, 1 for y
+    factor: float
+
+@dataclass
+class Dependency:
+    dependency_index: int
+    dependant_x: bool
+    dependant_y: bool
+    masters: List[MasterNode]
 
 
 @dataclass
