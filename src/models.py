@@ -16,8 +16,6 @@ class Node:
     deformation_y: float = 0.0
     load_x: float = 0.0
     load_y: float = 0.0
-    dof_x: Optional[int] = None
-    dof_y: Optional[int] = None
     dependency: Optional['Dependency'] = None
     local_deformations: Optional[np.ndarray] = None
 
@@ -42,10 +40,11 @@ class Element:
     A: float = 0.01
     local_deformations: Optional[np.ndarray] = None
 
-    def DOFs(self) -> List[int]:
+    def getDOFs(self) -> List[int]:
         dofs = []
         for node in self.nodes:
-            node_dofs = [node.dof_x, node.dof_y]
+            # since dof ids are in same order as nodes we can get both from node index
+            node_dofs = [node.index * 2, node.index * 2 + 1]
             dofs.extend(node_dofs)
         return dofs
 
@@ -88,12 +87,14 @@ class Element:
 
         for i, node in enumerate(self.nodes):
             node_deformations = np.zeros(2, dtype=float)
-            if node.dof_x < deformations.shape[0]:  # if dof is free
-                self.local_deformations[i * 2] = deformations[node.dof_x]
-                node_deformations[0] = deformations[node.dof_x]
-            if node.dof_y < deformations.shape[0]:
-                self.local_deformations[i * 2 + 1] = deformations[node.dof_y]
-                node_deformations[1] = deformations[node.dof_y]
+            dof_x = node.index * 2
+            dof_y = dof_x + 1
+            if dof_x < deformations.shape[0]:  # if dof is free
+                self.local_deformations[i * 2] = deformations[dof_x]
+                node_deformations[0] = deformations[dof_x]
+            if dof_y < deformations.shape[0]:
+                self.local_deformations[i * 2 + 1] = deformations[dof_y]
+                node_deformations[1] = deformations[dof_y]
             node.local_deformations = node_deformations
 
     def axial_force(self) -> float:

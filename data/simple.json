@@ -1,0 +1,54 @@
+{
+  "$schema": "./input.schema.json",
+  "nodes": [
+    {
+      "dx": "0",
+      "dy": "0",
+      "constraints": "x"
+    },
+    {
+      "dx": "10",
+      "dy": "0",
+      "loads": {
+        "y": 50
+      }
+    },
+    {
+      "dx": "20",
+      "dy": "0"
+    },
+    {
+      "dx": "30",
+      "dy": "0",
+      "constraints": "xy"
+    }
+  ],
+  "dependencies": [
+    {
+      "node": 2,
+      "direction": "y",
+      "masters": [
+        {
+          "node": 1,
+          "direction": "y",
+          "factor": 1
+        }
+      ]
+    }
+  ],
+  "elements": [
+    {
+      "starting_node": 0,
+      "ending_node": 1
+    }
+    ,
+    {
+      "starting_node": 1,
+      "ending_node": 2
+    },
+    {
+      "starting_node": 2,
+      "ending_node": 3
+    }
+  ]
+}
