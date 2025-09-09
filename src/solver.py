@@ -1,7 +1,8 @@
 import numpy as np
 from models import TrussData
 from scipy.sparse import lil_matrix, linalg, identity, bmat
-from numpy import set_printoptions, save
+from numpy import set_printoptions
+from scipy.sparse.linalg import spsolve
 
 E = 210e6  # Pa
 A = 0.01  # m^2
@@ -181,10 +182,10 @@ class TrussSolver:
         for element in self.truss.elements:
             stiffness_matrix = element.stiffness()
 
-            # Global DOF indices for this element
+            # global DOF indices for this element
             dofs = element.getDOFs()
 
-            # Add to global stiffness matrix
+            # add to global stiffness matrix
             for i in range(4):
                 for j in range(4):
                     self.K[dofs[i], dofs[j]] += stiffness_matrix[i, j]
@@ -203,7 +204,7 @@ class TrussSolver:
         rhs = f_vec[:len(free_dof_indices)] - B @ r_fixed
 
         # Solve for free DOF displacements
-        from scipy.sparse.linalg import spsolve
+
         r_free_solved = spsolve(A, rhs)
 
         print(f"Solved free displacements: {r_free_solved}")

@@ -11,7 +11,7 @@
 // set page format to a4 and margin to 1cm
 
 
-#let data = json("test.json")
+#let data = json("mesh.json")
 
 #canvas(length: 2cm, {
   import draw: *
@@ -27,25 +27,24 @@
     content: (padding: 1pt),
   )
 
-  let point(coords) = circle(coords, radius: 0.01, fill: black, stroke: none)
+  let point(coords) = circle(coords, radius: 0.01, fill: black, stroke: none) //styl pro uzel
 
-  for i in range(data.nodes.len()) {
+  for i in range(data.nodes.len()) { //pro každý uzel
     let node = data.nodes.at(i)
-    point((float(eval(node.dx)), float(eval(node.dy)) * -1))
-    anchor(str(i + 1), (float(eval(node.dx)), float(eval(node.dy)) * -1))
-    content(str(i + 1), anchor: "north", text(black)[$ #(i + 1) $], padding: .1)
+    point((float(eval(node.dx)), float(eval(node.dy)) * -1)) //tečka
+    anchor(str(i + 1), (float(eval(node.dx)), float(eval(node.dy)) * -1)) //kotva pro text
+    content(str(i + 1), anchor: "north", text(black)[$ #(i + 1) $], padding: .1) //text (číslo uzlu)
   }
 
-  for i in range(data.elements.len()) {
+  for i in range(data.elements.len()) { //pro každý prut
     let element = data.elements.at(i)
     let startNode = data.nodes.at(int(element.starting_node))
     let endNode = data.nodes.at(int(element.ending_node))
     let startCoords = (float(eval(startNode.dx)), float(eval(startNode.dy)) * -1)
     let endCoords = (float(eval(endNode.dx)), float(eval(endNode.dy)) * -1)
-    line(startCoords, endCoords, stroke: black)
-    //anchor("el" + str(i + 1), startCoords) thius is wring, should be in the middle of the line
-    anchor("el" + str(i + 1), ((startCoords.at(0) + endCoords.at(0)) / 2, (startCoords.at(1) + endCoords.at(1)) / 2))
-    content("el" + str(i + 1), anchor: "south-east", text(green)[$ #(i + 1) $], padding: .1)
+    line(startCoords, endCoords, stroke: black) //čára
+    anchor("el" + str(i + 1), ((startCoords.at(0) + endCoords.at(0)) / 2, (startCoords.at(1) + endCoords.at(1)) / 2)) //kotva do středu prutu
+    content("el" + str(i + 1), anchor: "south-east", text(green)[$ #(i + 1) $], padding: .1) //text (číslo prutu)
   }
 })
 
