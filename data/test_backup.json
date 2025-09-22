@@ -4,9 +4,7 @@
     { "dx": "0", "dy": "0", "constraints": "x"},
     { "dx": "2", "dy": "0" },
     { "dx": "1", "dy": "-4/3", "loads": {"x": 9, "y": 4} },
-    { "dx": "2", "dy": "-4/3", "deformations": {
-      "x": -0.00001
-    }},
+    { "dx": "2", "dy": "-4/3" },
     { "dx": "2", "dy": "-8/3", "constraints": "xy"}
   ],
   "dependencies": [

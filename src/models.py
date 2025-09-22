@@ -19,11 +19,13 @@ class Node:
     dependency: Optional['Dependency'] = None
     local_deformations: Optional[np.ndarray] = None
 
+
 @dataclass
 class MasterNode:
     nodeIndex: int
     direction: int # 0 for x, 1 for y
     factor: float
+    eigenstrain: bool = True
 
 @dataclass
 class Dependency:
@@ -39,6 +41,25 @@ class Element:
     E: float = 210e6
     A: float = 0.01
     local_deformations: Optional[np.ndarray] = None
+    _stiffness_matrix: Optional[np.ndarray] = None
+
+    def __post_init__(self):
+        displacements = np.array([
+            self.nodes[0].deformation_x,
+            self.nodes[0].deformation_y,
+            self.nodes[1].deformation_x,
+            self.nodes[1].deformation_y
+        ])
+
+        if not np.all(displacements == 0):
+            forces = self.stiffness() @ displacements
+
+            self.nodes[0].load_x += forces[0]
+            self.nodes[0].load_y += forces[1]
+            self.nodes[1].load_x += forces[2]
+            self.nodes[1].load_y += forces[3]
+
+        print(f"Initial forces for nodes {self.nodes[0].index} and {self.nodes[1].index} are {self.nodes[0].load_x}, {self.nodes[0].load_y}, {self.nodes[1].load_x}, {self.nodes[1].load_y}")
 
     def getDOFs(self) -> List[int]:
         dofs = []
@@ -69,6 +90,8 @@ class Element:
     def stiffness(
             self,
     ) -> np.ndarray:
+        if self._stiffness_matrix is not None:
+            return self._stiffness_matrix
         base = (self.E * self.A) / self.magnitude()
 
         cos, sin = self.get_cos_sin()
@@ -79,7 +102,8 @@ class Element:
 
         local_matrix = np.array([[uu, uw], [uw, ww]])
 
-        return np.block([[local_matrix, -local_matrix], [-local_matrix, local_matrix]])
+        self._stiffness_matrix = np.block([[local_matrix, -local_matrix], [-local_matrix, local_matrix]])
+        return self._stiffness_matrix
 
     def set_local_deformations(self, deformations: csc_array) -> None:
 

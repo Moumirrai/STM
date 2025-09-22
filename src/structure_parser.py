@@ -55,16 +55,24 @@ def parse_json_file(file_path: str) -> TrussData:
             print(f"Warning: Dependency {i} for node {node_index} has no masters.")
             continue
 
-        # Process masters and set dependency flags in one pass
         master_nodes = []
         for master_data in dependency["masters"]:
             direction = 0 if master_data["direction"] == "x" else 1
 
-            # Set dependency flags based on direction
             if direction == 0:
                 dependency_object.dependant_x = True
             else:
                 dependency_object.dependant_y = True
+
+            if master_data.get("eigenstrain") != False:
+                master_node = nodes[master_data["node"]]
+
+                if direction == 0:  # x direction
+                    distance = abs(master_node.dx - node.dx)
+                    node.deformation_x += distance * 0.001
+                else:  # y direction
+                    distance = abs(master_node.dy - node.dy)
+                    node.deformation_y += distance * 0.001
 
             master_nodes.append(MasterNode(
                 nodeIndex=master_data["node"],
