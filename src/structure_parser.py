@@ -1,6 +1,8 @@
 import json
 from typing import List
 
+import numpy as np
+
 from models import TrussData, Node, Dependency, MasterNode, Element
 
 
@@ -40,6 +42,13 @@ def parse_json_file(file_path: str) -> TrussData:
 
         nodes.append(new_node)
 
+    eigenstrain_data = data.get("eigenstrain", {})
+    eigenstrain_vector = np.array([
+        eigenstrain_data.get("x", 0.0),
+        eigenstrain_data.get("y", 0.0),
+        eigenstrain_data.get("angle", 0.0)
+    ])
+
     for i, dependency in enumerate(data.get("dependencies", [])):
         node_index = dependency["node"]
         node = nodes[node_index]
@@ -69,10 +78,10 @@ def parse_json_file(file_path: str) -> TrussData:
 
                 if direction == 0:  # x direction
                     distance = abs(master_node.dx - node.dx)
-                    node.deformation_x += distance * 0.001
+                    node.deformation_x += distance * eigenstrain_vector[0]
                 else:  # y direction
                     distance = abs(master_node.dy - node.dy)
-                    node.deformation_y += distance * 0.001
+                    node.deformation_y += distance * eigenstrain_vector[1]
 
             master_nodes.append(MasterNode(
                 nodeIndex=master_data["node"],
@@ -93,4 +102,5 @@ def parse_json_file(file_path: str) -> TrussData:
         )
         for element in data["elements"]
     ]
+
     return TrussData(nodes, elements, total_constraints)

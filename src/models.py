@@ -134,3 +134,4 @@ class TrussData:
     nodes: List[Node]
     elements: List[Element]
     constrained_dofs_count: int
+    eigenstrainVector: Optional[np.ndarray] = (0, 0, 0)

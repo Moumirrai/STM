@@ -33,5 +33,10 @@
     { "starting_node": 4, "ending_node": 3 },
     { "starting_node": 2, "ending_node": 7 },
     { "starting_node": 0, "ending_node": 5 }
-  ]
+  ],
+  "eigenstrain": {
+    "x": 0.00001,
+    "y": 0.00000,
+    "angle": 0.00000
+  }
 }
