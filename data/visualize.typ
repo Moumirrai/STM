@@ -11,7 +11,7 @@
 // set page format to a4 and margin to 1cm
 
 
-#let data = json("mesh.json")
+#let data = json("star.json")
 
 #canvas(length: 2cm, {
   import draw: *
@@ -33,7 +33,7 @@
     let node = data.nodes.at(i)
     point((float(eval(node.dx)), float(eval(node.dy)) * -1)) //tečka
     anchor(str(i + 1), (float(eval(node.dx)), float(eval(node.dy)) * -1)) //kotva pro text
-    content(str(i + 1), anchor: "north", text(black)[$ #(i + 1) $], padding: .1) //text (číslo uzlu)
+    content(str(i + 1), anchor: "north", text(black)[$ #(i) $], padding: .1) //text (číslo uzlu)
   }
 
   for i in range(data.elements.len()) { //pro každý prut

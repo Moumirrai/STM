@@ -1,0 +1,35 @@
+{
+  "$schema": "./input.schema.json",
+  "nodes": [
+    { "dx": "1", "dy": "1" },
+    { "dx": "0", "dy": "0" },
+    { "dx": "0", "dy": "1", "constraints": "xy" },
+    { "dx": "1", "dy": "0"},
+    { "dx": "2", "dy": "1/2" },
+    { "dx": "1/2", "dy": "2"},
+    { "dx": "-1", "dy": "1/2" },
+    { "dx": "1/2", "dy": "-1" }
+  ],
+  "dependencies": [
+    {
+      "node": 5, "direction": "y", "masters": [ { "node": 7, "direction": "y", "factor": 1 } ]
+    },
+    {
+      "node": 6, "direction": "x", "masters": [ { "node": 4, "direction": "x", "factor": 1 } ]
+    }
+  ],
+  "elements": [
+    { "starting_node": 0, "ending_node": 2 },
+    { "starting_node": 2, "ending_node": 1 },
+    { "starting_node": 1, "ending_node": 3 },
+    { "starting_node": 3, "ending_node": 0 },
+    { "starting_node": 7, "ending_node": 3 },
+    { "starting_node": 7, "ending_node": 1 },
+    { "starting_node": 0, "ending_node": 5 },
+    { "starting_node": 4, "ending_node": 0 },
+    { "starting_node": 4, "ending_node": 3 },
+    { "starting_node": 2, "ending_node": 5 },
+    { "starting_node": 2, "ending_node": 6 },
+    { "starting_node": 6, "ending_node": 1 }
+  ]
+}
