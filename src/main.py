@@ -14,7 +14,7 @@ command_parser.add_argument(
     "file_path",
     type=str,
     nargs='?',
-    default="./data/star.json",
+    default="./data/line.json",
     help="Path to the input JSON"
 )
 
