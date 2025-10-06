@@ -1,33 +1,15 @@
-import argparse
-import os
-
 from models import TrussData
-
 from solver import TrussSolver
 from plotter import export_vtk
 from structure_parser import parse_json_file
+from numpy import set_printoptions
 
-# Argument parser
-command_parser = argparse.ArgumentParser(description="Solve a truss structure from provided JSON file")
-
-command_parser.add_argument(
-    "file_path",
-    type=str,
-    nargs='?',
-    default="./data/line.json",
-    help="Path to the input JSON"
+set_printoptions(
+    linewidth=250,
 )
 
-args = command_parser.parse_args()
-input_file_path = args.file_path
 
-if not os.path.exists(input_file_path):
-    print(f"Error: Input file not found at '{input_file_path}'")
-    exit(1)
-
-print(f"Loading data from: {input_file_path}")
-
-truss: TrussData = parse_json_file(input_file_path)
+truss: TrussData = parse_json_file('./data/line.json')
 
 solver = TrussSolver(truss)
 

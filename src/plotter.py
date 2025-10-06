@@ -6,7 +6,11 @@ import pyvista as pv
 def export_vtk(truss: TrussData):
     # convert nodes and deformations to Vec3
     points = np.array([[node.dx, node.dy, 0.0] for node in truss.nodes])
-    displacements = np.array([[node.local_deformations[0], node.local_deformations[1], 0.0] for node in truss.nodes])
+    displacements = np.array([
+        [node.local_deformations[0] if node.local_deformations is not None else 0.0,
+        node.local_deformations[1] if node.local_deformations is not None else 0.0,
+        0.0] for node in truss.nodes
+    ])
 
     forces = np.array([element.axial_force() for element in truss.elements])
 

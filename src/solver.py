@@ -1,7 +1,7 @@
 import numpy as np
 from models import TrussData
-from scipy.sparse import lil_matrix, linalg, identity, bmat
-from numpy import set_printoptions
+from scipy.sparse import lil_matrix, linalg, identity, bmat, csr_matrix
+
 from scipy.sparse.linalg import spsolve
 
 E = 210e6  # Pa
@@ -17,25 +17,8 @@ class TrussSolver:
         self.K = None  # global stiffness matrix
         self.DOFIDS = None  # degrees of freedom IDs
 
-    def check_stability(self):
-        """Check if the truss is stable"""
-        if self.K is None:
-            raise ValueError("Stiffness matrix is not computed yet.")
-
-        eigenvalues, _ = linalg.eigs(
-            self.K, k=1, which="SM"
-        )  # check for smallest eigenvalue
-        min_eigenvalue = eigenvalues.real[0]
-        if min_eigenvalue <= 1e-9:
-            raise ValueError(
-                "Truss is unstable! The smallest eigenvalue is close to zero."
-            )
-
     def solve(self):
 
-        set_printoptions(
-            linewidth=250,
-        )
         total_dof_count = len(self.truss.nodes) * 2
 
         # arrays to hold indices of free, dependent, and fixed dofs
@@ -120,7 +103,6 @@ class TrussSolver:
                     # for x coordinates we use the master_local_index (note that this is the local index in the reduced matrix)
                     x_d[local_i, master_local_index] = master.factor
 
-        # convert to CSR format
         x_d = x_d.tocsr()
         # now we can split the x_d matrix into x_d1 (free DOFs) and x_d2 (fixed DOFs)
         x_d1 = x_d[:, :len(free_dof_indices)]
@@ -131,8 +113,10 @@ class TrussSolver:
             [x_11, None],
             [x_d1, x_d2],
             [None, x_22]
-        ], format='csr')
-
+        ])
+        x_mat = x_mat.tocsr()
+        
+        # initialize reduced displacement and force vectors with known lengths
         r_reduced = np.zeros(len(free_and_fixed_indices))
         f_vec = np.zeros(len(free_dof_indices) + len(dependent_dof_indices))
 
@@ -213,7 +197,7 @@ class TrussSolver:
         r_vec_solved = np.zeros(total_dof_count)
         r_vec_solved[free_dof_indices] = r_free_solved
         r_vec_solved[dependent_dof_indices] = x_d1.dot(r_free_solved) + x_d2.dot(r_fixed)
-        r_vec_solved[fixed_dof_indices] = r_fixed
+        r_vec_solved[fixed_dof_indices] = np.array(r_fixed).flatten()
 
         print(f"Complete displacement vector: {r_vec_solved}")
 
