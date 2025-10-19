@@ -78,10 +78,10 @@ def parse_json_file(file_path: str) -> TrussData:
 
                 if direction == 0:  # x direction
                     distance = abs(master_node.dx - node.dx)
-                    node.deformation_x += distance * eigenstrain_vector[0]
+                    node.eigenstrain[0] = distance * eigenstrain_vector[0]
                 else:  # y direction
                     distance = abs(master_node.dy - node.dy)
-                    node.deformation_y += distance * eigenstrain_vector[1]
+                    node.eigenstrain[1] = distance * eigenstrain_vector[1]
 
             master_nodes.append(MasterNode(
                 nodeIndex=master_data["node"],

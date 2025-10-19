@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 from scipy.sparse import lil_matrix, linalg
 from scipy.sparse import csc_array
@@ -18,6 +18,7 @@ class Node:
     load_y: float = 0.0
     dependency: Optional['Dependency'] = None
     local_deformations: Optional[np.ndarray] = None
+    eigenstrain: np.ndarray = field(default_factory=lambda: np.zeros(2, dtype=float))
 
 
 @dataclass

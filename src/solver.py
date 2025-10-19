@@ -13,9 +13,7 @@ class TrussSolver:
     def __init__(
             self, truss: TrussData, young_modulus: float = 210e6, area: float = 0.01
     ):
-        self.truss = truss
-        self.K = None  # global stiffness matrix
-        self.DOFIDS = None  # degrees of freedom IDs
+        self.truss = truss # degrees of freedom IDs
 
     def solve(self):
 
@@ -59,27 +57,27 @@ class TrussSolver:
                 free_dof_indices.append(y_dof)
 
         # concat all indices
-        self.DOFIDS = free_dof_indices + dependent_dof_indices + fixed_dof_indices
+        DOFIDS = free_dof_indices + dependent_dof_indices + fixed_dof_indices
 
         """
         X matrix structure:
-          +--------+--------+
-          │  x_11  │  None  │ <- Free DOFs
-          +--------+--------+
-          │  x_d1  │  x_d2  │ <- Dependent DOFs
-          +--------+--------+
-          │  None  │  x_22  │ <- Fixed DOFs
-          +--------+--------+
-            Free     Fixed
+          +-------+-------+
+          │  X11  │  None │ <- Free DOFs
+          +-------+-------+
+          │  XD1  │  XD2  │ <- Dependent DOFs
+          +-------+-------+
+          │  None │  X22  │ <- Fixed DOFs
+          +-------+-------+
+             Free   Fixed
         """
 
-        x_11 = identity(len(free_dof_indices))
-        x_22 = identity(len(fixed_dof_indices))
+        X11 = identity(len(free_dof_indices))
+        X22 = identity(len(fixed_dof_indices))
 
         free_and_fixed_indices = free_dof_indices + fixed_dof_indices
 
         # create the xd1+xd2 matrix
-        x_d = lil_matrix((len(dependent_dof_indices), len(free_and_fixed_indices)))
+        XD = lil_matrix((len(dependent_dof_indices), len(free_and_fixed_indices)))
         # create index map beforehand, so we don't have to index array every time
         reduced_index_map = {dof: idx for idx, dof in enumerate(free_and_fixed_indices)}
 
@@ -101,24 +99,25 @@ class TrussSolver:
                     master_local_index = reduced_index_map[master_global_dof]
                     # fox y coordinates we can increment loop index since we already have ordered the DOFs
                     # for x coordinates we use the master_local_index (note that this is the local index in the reduced matrix)
-                    x_d[local_i, master_local_index] = master.factor
+                    XD[local_i, master_local_index] = master.factor
 
-        x_d = x_d.tocsr()
-        # now we can split the x_d matrix into x_d1 (free DOFs) and x_d2 (fixed DOFs)
-        x_d1 = x_d[:, :len(free_dof_indices)]
-        x_d2 = x_d[:, len(free_dof_indices):]
+        XD = XD.tocsr()
+        # now we can split the XD matrix into XD1 (free DOFs) and XD2 (fixed DOFs)
+        XD1 = XD[:, :len(free_dof_indices)]
+        XD2 = XD[:, len(free_dof_indices):]
 
         # and assemble the full X matrix
         x_mat = bmat([
-            [x_11, None],
-            [x_d1, x_d2],
-            [None, x_22]
+            [X11, None],
+            [XD1, XD2],
+            [None, X22]
         ])
         x_mat = x_mat.tocsr()
         
         # initialize reduced displacement and force vectors with known lengths
-        r_reduced = np.zeros(len(free_and_fixed_indices))
+        u_reduced = np.zeros(len(free_and_fixed_indices))
         f_vec = np.zeros(len(free_dof_indices) + len(dependent_dof_indices))
+        a_dependant_vec = np.zeros(len(dependent_dof_indices))
 
         free_index_map = {dof: idx for idx, dof in enumerate(free_dof_indices)}
         fixed_index_map = {dof: idx for idx, dof in enumerate(fixed_dof_indices)}
@@ -128,28 +127,33 @@ class TrussSolver:
             base_dof = node_idx * 2
             loads = [node.load_x, node.load_y]
             deformations = [node.deformation_x, node.deformation_y]
+            eigenstrains = node.eigenstrain
 
-            for direction, (load, deformation) in enumerate(zip(loads, deformations)):
+            for direction, (load, deformation, eigenstrain) in enumerate(zip(loads, deformations, eigenstrains)):
                 global_dof = base_dof + direction
 
                 if global_dof in free_index_map:
-                    r_reduced[free_index_map[global_dof]] = deformation
+                    u_reduced[free_index_map[global_dof]] = deformation
                     f_vec[free_index_map[global_dof]] = load
                 elif global_dof in dependent_index_map:
                     f_vec[len(free_dof_indices) + dependent_index_map[global_dof]] = load
+                    a_dependant_vec[dependent_index_map[global_dof]] = eigenstrain
                 elif global_dof in fixed_index_map:
-                    r_reduced[len(free_dof_indices) + fixed_index_map[global_dof]] = deformation
+                    u_reduced[len(free_dof_indices) + fixed_index_map[global_dof]] = deformation
 
-        r_vec = x_mat.dot(r_reduced)
+        u_vec = x_mat.dot(u_reduced)
 
-        # split r_vec into free and fixed parts
-        r_fixed = r_vec[len(free_dof_indices) + len(dependent_dof_indices):]
+        # split u_vec into free and fixed parts
+        u_fixed = u_vec[len(free_dof_indices) + len(dependent_dof_indices):]
+
+        f_1 = f_vec[:len(free_dof_indices)] #TODO
+        f_D = f_vec[len(free_dof_indices):len(free_dof_indices) + len(dependent_dof_indices)] #TODO
 
         # now we need to assamble the global stiffness matrix K
         # we will devide it into 3 parts:
         # K11 - free DOFs, K1D - dependent DOFs, K12 - fixed DOFs, only the horizontal part is needed
 
-        self.K = lil_matrix((total_dof_count, total_dof_count))
+        raw_K_matrix = lil_matrix((total_dof_count, total_dof_count))
 
         """
         K matrix structure:
@@ -172,20 +176,59 @@ class TrussSolver:
             # add to global stiffness matrix
             for i in range(4):
                 for j in range(4):
-                    self.K[dofs[i], dofs[j]] += stiffness_matrix[i, j]
+                    raw_K_matrix[dofs[i], dofs[j]] += stiffness_matrix[i, j]
 
-        self.K = self.K.tocsr()
+        raw_K_matrix = raw_K_matrix.tocsr()
 
         # Partition K matrix according to DOF ordering
-        K11 = self.K[np.ix_(free_dof_indices, free_dof_indices)]
-        K1D = self.K[np.ix_(free_dof_indices, dependent_dof_indices)]
-        K12 = self.K[np.ix_(free_dof_indices, fixed_dof_indices)]
+        K11 = raw_K_matrix[free_dof_indices, :][:, free_dof_indices]
+        K1D = raw_K_matrix[free_dof_indices, :][:, dependent_dof_indices]
+        KD1 = raw_K_matrix[dependent_dof_indices, :][:, free_dof_indices]
+        KDD = raw_K_matrix[dependent_dof_indices, :][:, dependent_dof_indices]
+        K21 = raw_K_matrix[fixed_dof_indices, :][:, free_dof_indices]
+        KD2 = raw_K_matrix[dependent_dof_indices, :][:, fixed_dof_indices]
+        K2D = raw_K_matrix[fixed_dof_indices, :][:, dependent_dof_indices]
 
-        A = K11 + K1D @ x_d1
-        B = K12 + K1D @ x_d2
+        print("K1D:")
+        print(K1D.toarray())
+
+        print("XD1.T:")
+        print(XD1.T.toarray())
+
+        ASSAMBLED_K = K11 + XD1.T @ KD1 + K1D @ XD1 + XD1.T @ KDD @ XD1
+
+        print(ASSAMBLED_K.toarray())
+
+        print("KD2:")
+        print(KD2.toarray())
+
+        print("KDD:")
+        print(KDD.toarray())
+
+        print("XD1:")
+        print(XD1.toarray())
+
+        RED = f_1 + XD1.T @ f_D
+
+        print("RED:")
+        print(RED)
+
+        GREEN = XD2.T @ KD1 + K21
+        print("GREEN")
+        print(GREEN.toarray())
+
+        ASSAMBLED_F = f_1 + XD1.T @ f_D + (0.5 * u_fixed.T @ (XD2.T @ KD1 + K21 + KD2 @ KDD @ KD1)+K2D @ XD1).T + 0.5 * (K1D @ XD2 + XD1.T @ KDD @ XD2 + K12 + XD1.T @ KD2) @ u_fixed + 0.5 * (K1D + KD1.T @ KDD) + a_dependant_vec
+
+        print("Assembled F:")
+        print(ASSAMBLED_F)
+
+        K12 = raw_K_matrix[free_dof_indices, :][:, fixed_dof_indices]
+
+        A = K11 + K1D @ XD1
+        B = K12 + K1D @ XD2
 
         # Calculate right-hand side vector
-        rhs = f_vec[:len(free_dof_indices)] - B @ r_fixed
+        rhs = f_vec[:len(free_dof_indices)] - B @ u_fixed
 
         # Solve for free DOF displacements
 
@@ -196,8 +239,8 @@ class TrussSolver:
         # Update the full displacement vector
         r_vec_solved = np.zeros(total_dof_count)
         r_vec_solved[free_dof_indices] = r_free_solved
-        r_vec_solved[dependent_dof_indices] = x_d1.dot(r_free_solved) + x_d2.dot(r_fixed)
-        r_vec_solved[fixed_dof_indices] = np.array(r_fixed).flatten()
+        r_vec_solved[dependent_dof_indices] = XD1.dot(r_free_solved) + XD2.dot(u_fixed)
+        r_vec_solved[fixed_dof_indices] = np.array(u_fixed).flatten()
 
         print(f"Complete displacement vector: {r_vec_solved}")
 

@@ -11,7 +11,7 @@
 // set page format to a4 and margin to 1cm
 
 
-#let data = json("line.json")
+#let data = json("star.json")
 
 #canvas(length: 2cm, {
   import draw: *
