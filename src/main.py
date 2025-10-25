@@ -9,7 +9,7 @@ set_printoptions(
 )
 
 
-truss: TrussData = parse_json_file('./data/line.json')
+truss: TrussData = parse_json_file('./data/simple_truss1.json')
 
 solver = TrussSolver(truss)
 

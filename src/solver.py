@@ -182,6 +182,7 @@ class TrussSolver:
 
         # Partition K matrix according to DOF ordering
         K11 = raw_K_matrix[free_dof_indices, :][:, free_dof_indices]
+        K12 = raw_K_matrix[free_dof_indices, :][:, fixed_dof_indices]
         K1D = raw_K_matrix[free_dof_indices, :][:, dependent_dof_indices]
         KD1 = raw_K_matrix[dependent_dof_indices, :][:, free_dof_indices]
         KDD = raw_K_matrix[dependent_dof_indices, :][:, dependent_dof_indices]
@@ -189,60 +190,21 @@ class TrussSolver:
         KD2 = raw_K_matrix[dependent_dof_indices, :][:, fixed_dof_indices]
         K2D = raw_K_matrix[fixed_dof_indices, :][:, dependent_dof_indices]
 
-        print("K1D:")
-        print(K1D.toarray())
-
-        print("XD1.T:")
-        print(XD1.T.toarray())
-
         ASSAMBLED_K = K11 + XD1.T @ KD1 + K1D @ XD1 + XD1.T @ KDD @ XD1
 
-        print(ASSAMBLED_K.toarray())
+        ASSAMBLED_F = -1 * (f_1 + XD1.T @ f_D + (0.5 * u_fixed.T @ (XD2.T @ KD1 + K21 + KD2.T @ KDD @ KD1+K2D @ XD1)).T + 0.5 * (K1D @ XD2 + XD1.T @ KDD @ XD2 + K12 + XD1.T @ KD2) @ u_fixed + (K1D + XD1.T @ KDD) @ a_dependant_vec)
 
-        print("KD2:")
-        print(KD2.toarray())
+        u_free_solved = spsolve(ASSAMBLED_K, ASSAMBLED_F)
 
-        print("KDD:")
-        print(KDD.toarray())
-
-        print("XD1:")
-        print(XD1.toarray())
-
-        RED = f_1 + XD1.T @ f_D
-
-        print("RED:")
-        print(RED)
-
-        GREEN = XD2.T @ KD1 + K21
-        print("GREEN")
-        print(GREEN.toarray())
-
-        ASSAMBLED_F = f_1 + XD1.T @ f_D + (0.5 * u_fixed.T @ (XD2.T @ KD1 + K21 + KD2 @ KDD @ KD1)+K2D @ XD1).T + 0.5 * (K1D @ XD2 + XD1.T @ KDD @ XD2 + K12 + XD1.T @ KD2) @ u_fixed + 0.5 * (K1D + KD1.T @ KDD) + a_dependant_vec
-
-        print("Assembled F:")
-        print(ASSAMBLED_F)
-
-        K12 = raw_K_matrix[free_dof_indices, :][:, fixed_dof_indices]
-
-        A = K11 + K1D @ XD1
-        B = K12 + K1D @ XD2
-
-        # Calculate right-hand side vector
-        rhs = f_vec[:len(free_dof_indices)] - B @ u_fixed
-
-        # Solve for free DOF displacements
-
-        r_free_solved = spsolve(A, rhs)
-
-        print(f"Solved free displacements: {r_free_solved}")
+        print(f"Solved free displacements: {u_free_solved}")
 
         # Update the full displacement vector
-        r_vec_solved = np.zeros(total_dof_count)
-        r_vec_solved[free_dof_indices] = r_free_solved
-        r_vec_solved[dependent_dof_indices] = XD1.dot(r_free_solved) + XD2.dot(u_fixed)
-        r_vec_solved[fixed_dof_indices] = np.array(u_fixed).flatten()
+        u_vec_solved = np.zeros(total_dof_count)
+        u_vec_solved[free_dof_indices] = u_free_solved
+        u_vec_solved[dependent_dof_indices] = XD1.dot(u_free_solved) + XD2.dot(u_fixed) + a_dependant_vec
+        u_vec_solved[fixed_dof_indices] = np.array(u_fixed).flatten()
 
-        print(f"Complete displacement vector: {r_vec_solved}")
+        print(f"Complete displacement vector: {u_vec_solved}")
 
         for element in self.truss.elements:
-            element.set_local_deformations(r_vec_solved)
+            element.set_local_deformations(u_vec_solved)

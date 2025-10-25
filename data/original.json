@@ -15,10 +15,19 @@
       "node": 0, "direction": "y", "masters": [ { "node": 7, "direction": "y", "factor": 1 } ]
     },
     {
+      "node": 0, "direction": "x", "masters": [ { "node": 7, "direction": "x", "factor": 1 } ]
+    },
+    {
       "node": 1, "direction": "x", "masters": [ { "node": 5, "direction": "x", "factor": 1 } ]
     },
     {
+      "node": 1, "direction": "y", "masters": [ { "node": 5, "direction": "y", "factor": 1 } ]
+    },
+    {
       "node": 2, "direction": "x", "masters": [ { "node": 6, "direction": "x", "factor": 1 } ]
+    },
+    {
+      "node": 2, "direction": "y", "masters": [ { "node": 6, "direction": "y", "factor": 1 } ]
     }
   ],
   "elements": [

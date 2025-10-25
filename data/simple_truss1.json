@@ -1,10 +1,18 @@
 {
   "$schema": "./input.schema.json",
   "nodes": [
-    { "dx": "-3", "dy": "0", "constraints": "xy" },
-    { "dx": "0", "dy": "0"},
-    { "dx": "3", "dy": "0", "constraints": "y" },
-    { "dx": "0", "dy": "-2", "loads": {"x": -55} }
+    { "dx": "-3", "dy": "0" },
+    { "dx": "0", "dy": "0", "constraints": "xy"},
+    { "dx": "3", "dy": "0" },
+    { "dx": "0", "dy": "-2", "constraints": "x"}
+  ],
+  "dependencies": [
+    {
+      "node": 0, "direction": "y", "masters": [ { "node": 2, "direction": "y", "factor": 1 } ]
+    },
+    {
+      "node": 0, "direction": "x", "masters": [ { "node": 2, "direction": "x", "factor": 1 } ]
+    }
   ],
   "elements": [
     { "starting_node": 0, "ending_node": 1 },
@@ -12,5 +20,10 @@
     { "starting_node": 3, "ending_node": 2 },
     { "starting_node": 3, "ending_node": 0 },
     { "starting_node": 3, "ending_node": 1 }
-  ]
+  ],
+  "eigenstrain": {
+    "x": 0.00001,
+    "y": 0.00000,
+    "angle": 0.00000
+  }
 }
