@@ -181,14 +181,19 @@ class TrussSolver:
         raw_K_matrix = raw_K_matrix.tocsr()
 
         # Partition K matrix according to DOF ordering
-        K11 = raw_K_matrix[free_dof_indices, :][:, free_dof_indices]
-        K12 = raw_K_matrix[free_dof_indices, :][:, fixed_dof_indices]
-        K1D = raw_K_matrix[free_dof_indices, :][:, dependent_dof_indices]
-        KD1 = raw_K_matrix[dependent_dof_indices, :][:, free_dof_indices]
-        KDD = raw_K_matrix[dependent_dof_indices, :][:, dependent_dof_indices]
-        K21 = raw_K_matrix[fixed_dof_indices, :][:, free_dof_indices]
-        KD2 = raw_K_matrix[dependent_dof_indices, :][:, fixed_dof_indices]
-        K2D = raw_K_matrix[fixed_dof_indices, :][:, dependent_dof_indices]
+        # convert index lists to numpy int arrays for indexing
+        free_idx = np.array(free_dof_indices, dtype=int)
+        dep_idx = np.array(dependent_dof_indices, dtype=int)
+        fix_idx = np.array(fixed_dof_indices, dtype=int)
+
+        K11 = raw_K_matrix[free_idx][:, free_idx]
+        K12 = raw_K_matrix[free_idx][:, fix_idx]
+        K1D = raw_K_matrix[free_idx][:, dep_idx]
+        KD1 = raw_K_matrix[dep_idx][:, free_idx]
+        KDD = raw_K_matrix[dep_idx][:, dep_idx]
+        K21 = raw_K_matrix[fix_idx][:, free_idx]
+        KD2 = raw_K_matrix[dep_idx][:, fix_idx]
+        K2D = raw_K_matrix[fix_idx][:, dep_idx]
 
         ASSAMBLED_K = K11 + XD1.T @ KD1 + K1D @ XD1 + XD1.T @ KDD @ XD1
 

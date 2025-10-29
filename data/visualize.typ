@@ -11,7 +11,7 @@
 // set page format to a4 and margin to 1cm
 
 
-#let data = json("star.json")
+#let data = json("simple_truss1.json")
 
 #canvas(length: 2cm, {
   import draw: *
@@ -130,3 +130,5 @@ Fixed DOFs: 4
 ]
 
 == R vectors -> zero
+
+$A_D^2K_"DD"+u_1^2X_"D1"^2K_"DD"+2A_D u_1X_"D1"K_"DD"+2u_1X_"D1"X_"D2"u_2K_"DD"+X_"D2"^2u_2^2K_"DD"+2A_D X_"D2"u_2K_"DD"+u_1^2X_"D1"K_"D1"+u_1X_"D2"u_2K_"D1"+A_D u_1K_"D1"+u_1X_"D1"u_2K_"D2"+X_"D2"u_2^2K_"D2"+A_D u_2K_"D2"$

@@ -17,10 +17,9 @@ def export_vtk(truss: TrussData):
     # create lines from elements, 2 specifies number of points per line
     lines = np.array([[2, element.nodes[0].index, element.nodes[1].index] for element in truss.elements]).flatten()
 
-    poly = pv.PolyData()
-    poly.points = points
-    poly.lines = lines
+    # construct PolyData with points and lines to avoid assignment-type mismatch
+    poly = pv.PolyData(points, lines)
     poly.point_data['displacement'] = displacements
     poly.cell_data['axial_force'] = forces
 
-    poly.save("fixed.vtp", binary=True)
+    poly.save("output.vtp", binary=True)

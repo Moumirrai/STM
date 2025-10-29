@@ -2,6 +2,7 @@ import json
 from typing import List
 
 import numpy as np
+import math
 
 from models import TrussData, Node, Dependency, MasterNode, Element
 
@@ -30,7 +31,7 @@ def parse_json_file(file_path: str) -> TrussData:
 
         new_node = Node(
             index=i,
-            dx=eval(node_data["dx"]),
+            dx=eval(node_data["dx"]), # using eval to allow fractions
             dy=eval(node_data["dy"]),
             constrained_x=constrained_x,
             constrained_y=constrained_y,
@@ -38,6 +39,7 @@ def parse_json_file(file_path: str) -> TrussData:
             deformation_y=deformation_y,
             load_x=load_x,
             load_y=load_y,
+            eigenstrain=np.array([0.0, 0.0]),
         )
 
         nodes.append(new_node)
@@ -52,13 +54,15 @@ def parse_json_file(file_path: str) -> TrussData:
     for i, dependency in enumerate(data.get("dependencies", [])):
         node_index = dependency["node"]
         node = nodes[node_index]
+        
+        if node.dependency is None:
+            node.dependency = Dependency(
+                masters= [],
+                dependant_x=False,
+                dependant_y=False,
+                dependency_index=i
+            )
 
-        dependency_object = Dependency(
-            masters= [],
-            dependant_x=False,
-            dependant_y=False,
-            dependency_index=i
-        )
 
         if len(dependency["masters"]) == 0:
             print(f"Warning: Dependency {i} for node {node_index} has no masters.")
@@ -69,19 +73,19 @@ def parse_json_file(file_path: str) -> TrussData:
             direction = 0 if master_data["direction"] == "x" else 1
 
             if direction == 0:
-                dependency_object.dependant_x = True
+                node.dependency.dependant_x = True
             else:
-                dependency_object.dependant_y = True
+                node.dependency.dependant_y = True
 
-            if master_data.get("eigenstrain") != False:
+            if master_data.get("eigenstrain") != False: # this is correct, we default to True if not specified
                 master_node = nodes[master_data["node"]]
 
                 if direction == 0:  # x direction
                     distance = abs(master_node.dx - node.dx)
-                    node.eigenstrain[0] = distance * eigenstrain_vector[0]
+                    node.eigenstrain[0] += distance * eigenstrain_vector[0] + math.tan(eigenstrain_vector[2])/2 * (master_node.dy - node.dy)
                 else:  # y direction
                     distance = abs(master_node.dy - node.dy)
-                    node.eigenstrain[1] = distance * eigenstrain_vector[1]
+                    node.eigenstrain[1] += distance * eigenstrain_vector[1] + math.tan(eigenstrain_vector[2])/2 * (master_node.dx - node.dx)
 
             master_nodes.append(MasterNode(
                 nodeIndex=master_data["node"],
@@ -89,9 +93,7 @@ def parse_json_file(file_path: str) -> TrussData:
                 direction=direction
             ))
 
-        dependency_object.masters = master_nodes
-
-        node.dependency = dependency_object
+        node.dependency.masters.extend(master_nodes)
 
     elements = [
         Element(

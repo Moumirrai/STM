@@ -60,7 +60,7 @@ class Element:
             self.nodes[1].load_x += forces[2]
             self.nodes[1].load_y += forces[3]
 
-        print(f"Initial forces for nodes {self.nodes[0].index} and {self.nodes[1].index} are {self.nodes[0].load_x}, {self.nodes[0].load_y}, {self.nodes[1].load_x}, {self.nodes[1].load_y}")
+        #print(f"Initial forces for nodes {self.nodes[0].index} and {self.nodes[1].index} are {self.nodes[0].load_x}, {self.nodes[0].load_y}, {self.nodes[1].load_x}, {self.nodes[1].load_y}")
 
     def getDOFs(self) -> List[int]:
         dofs = []
