@@ -184,20 +184,15 @@ class TrussSolver:
         # convert index lists to numpy int arrays for indexing
         free_idx = np.array(free_dof_indices, dtype=int)
         dep_idx = np.array(dependent_dof_indices, dtype=int)
-        fix_idx = np.array(fixed_dof_indices, dtype=int)
 
         K11 = raw_K_matrix[free_idx][:, free_idx]
-        K12 = raw_K_matrix[free_idx][:, fix_idx]
         K1D = raw_K_matrix[free_idx][:, dep_idx]
         KD1 = raw_K_matrix[dep_idx][:, free_idx]
         KDD = raw_K_matrix[dep_idx][:, dep_idx]
-        K21 = raw_K_matrix[fix_idx][:, free_idx]
-        KD2 = raw_K_matrix[dep_idx][:, fix_idx]
-        K2D = raw_K_matrix[fix_idx][:, dep_idx]
 
         ASSAMBLED_K = K11 + XD1.T @ KD1 + K1D @ XD1 + XD1.T @ KDD @ XD1
 
-        ASSAMBLED_F = -1 * (f_1 + XD1.T @ f_D + (0.5 * u_fixed.T @ (XD2.T @ KD1 + K21 + KD2.T @ KDD @ KD1+K2D @ XD1)).T + 0.5 * (K1D @ XD2 + XD1.T @ KDD @ XD2 + K12 + XD1.T @ KD2) @ u_fixed + (K1D + XD1.T @ KDD) @ a_dependant_vec)
+        ASSAMBLED_F = -1 * ( (K1D @ XD2 + XD1.T @ KDD @ XD2) @ u_fixed + (K1D + XD1.T @ KDD) @ a_dependant_vec - f_1 - XD1.T @ f_D )
 
         u_free_solved = spsolve(ASSAMBLED_K, ASSAMBLED_F)
 
