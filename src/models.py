@@ -122,11 +122,15 @@ class Element:
                 node_deformations[1] = deformations[dof_y]
             node.local_deformations = node_deformations
 
+    def forces_vector(self) -> np.ndarray:
+        stiffness_matrix = self.stiffness()
+        full_vec = stiffness_matrix @ self.local_deformations
+        return full_vec[2:]
+
     def axial_force(self) -> float:
         cos, sin = self.get_cos_sin()
-        stiffness_matrix = self.stiffness()
-        forces = stiffness_matrix @ self.local_deformations
-        normal_force = np.dot(forces[2:], np.array([cos, sin]))
+        forces = self.forces_vector()
+        normal_force = np.dot(forces, np.array([cos, sin]))
         return normal_force
 
 

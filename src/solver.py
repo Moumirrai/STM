@@ -206,5 +206,16 @@ class TrussSolver:
 
         print(f"Complete displacement vector: {u_vec_solved}")
 
+        suma = []
+
         for element in self.truss.elements:
             element.set_local_deformations(u_vec_solved)
+
+            forces = element.forces_vector()
+
+            value = element.magnitude() * element.axial_force() * np.multiply.outer(forces, forces)
+            print(value)
+            suma.append(value)
+
+        print("XXXXXXXXXXXXX")
+        print(sum(suma))
