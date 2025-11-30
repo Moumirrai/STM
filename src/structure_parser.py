@@ -81,11 +81,9 @@ def parse_json_file(file_path: str) -> TrussData:
                 master_node = nodes[master_data["node"]]
 
                 if direction == 0:  # x direction
-                    distance = abs(master_node.dx - node.dx)
-                    node.eigenstrain[0] += distance * eigenstrain_vector[0] + math.tan(eigenstrain_vector[2])/2 * (master_node.dy - node.dy)
+                    node.eigenstrain[0] += -1 * ((master_node.dx - node.dx) * eigenstrain_vector[0] + math.tan(eigenstrain_vector[2])/2 * (master_node.dy - node.dy))
                 else:  # y direction
-                    distance = abs(master_node.dy - node.dy)
-                    node.eigenstrain[1] += distance * eigenstrain_vector[1] + math.tan(eigenstrain_vector[2])/2 * (master_node.dx - node.dx)
+                    node.eigenstrain[1] += -1 * ((master_node.dy - node.dy) * eigenstrain_vector[1] + math.tan(eigenstrain_vector[2])/2 * (master_node.dx - node.dx))
 
             master_nodes.append(MasterNode(
                 nodeIndex=master_data["node"],
@@ -94,6 +92,8 @@ def parse_json_file(file_path: str) -> TrussData:
             ))
 
         node.dependency.masters.extend(master_nodes)
+
+    volume = data.get("volume", 1.0)
 
     elements = [
         Element(
@@ -105,4 +105,4 @@ def parse_json_file(file_path: str) -> TrussData:
         for element in data["elements"]
     ]
 
-    return TrussData(nodes, elements, total_constraints)
+    return TrussData(nodes, elements, total_constraints, volume)

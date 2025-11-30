@@ -196,7 +196,7 @@ class TrussSolver:
 
         u_free_solved = spsolve(ASSAMBLED_K, ASSAMBLED_F)
 
-        print(f"Solved free displacements: {u_free_solved}")
+        #print(f"Solved free displacements: {u_free_solved}")
 
         # Update the full displacement vector
         u_vec_solved = np.zeros(total_dof_count)
@@ -204,7 +204,7 @@ class TrussSolver:
         u_vec_solved[dependent_dof_indices] = XD1.dot(u_free_solved) + XD2.dot(u_fixed) + a_dependant_vec
         u_vec_solved[fixed_dof_indices] = np.array(u_fixed).flatten()
 
-        print(f"Complete displacement vector: {u_vec_solved}")
+        #print(f"Complete displacement vector: {u_vec_solved}")
 
         suma = []
 
@@ -214,8 +214,8 @@ class TrussSolver:
             forces = element.forces_vector()
 
             value = element.magnitude() * element.axial_force() * np.multiply.outer(forces, forces)
-            print(value)
             suma.append(value)
 
-        print("XXXXXXXXXXXXX")
-        print(sum(suma))
+        result = 1 / self.truss.volume * sum(suma)
+        print("Result:")
+        print(result)
