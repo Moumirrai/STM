@@ -1,21 +1,15 @@
 import numpy as np
 from models import TrussData
-from scipy.sparse import lil_matrix, linalg, identity, bmat, csr_matrix
-
+from scipy.sparse import lil_matrix, identity, bmat
 from scipy.sparse.linalg import spsolve
-
-E = 210e6  # Pa
-A = 0.01  # m^2
 
 
 class TrussSolver:
 
-    def __init__(
-            self, truss: TrussData, young_modulus: float = 210e6, area: float = 0.01
-    ):
-        self.truss = truss # degrees of freedom IDs
+    def __init__(self, truss: TrussData):
+        self.truss = truss
 
-    def solve(self):
+    def solve(self) -> np.ndarray:
 
         total_dof_count = len(self.truss.nodes) * 2
 
@@ -56,9 +50,6 @@ class TrussSolver:
             else:
                 free_dof_indices.append(y_dof)
 
-        # concat all indices
-        DOFIDS = free_dof_indices + dependent_dof_indices + fixed_dof_indices
-
         """
         X matrix structure:
           +-------+-------+
@@ -70,9 +61,6 @@ class TrussSolver:
           +-------+-------+
              Free   Fixed
         """
-
-        X11 = identity(len(free_dof_indices))
-        X22 = identity(len(fixed_dof_indices))
 
         free_and_fixed_indices = free_dof_indices + fixed_dof_indices
 
@@ -105,6 +93,9 @@ class TrussSolver:
         # now we can split the XD matrix into XD1 (free DOFs) and XD2 (fixed DOFs)
         XD1 = XD[:, :len(free_dof_indices)]
         XD2 = XD[:, len(free_dof_indices):]
+        
+        X11 = identity(len(free_dof_indices))
+        X22 = identity(len(fixed_dof_indices))
 
         # and assemble the full X matrix
         x_mat = bmat([
@@ -146,11 +137,11 @@ class TrussSolver:
         # split u_vec into free and fixed parts
         u_fixed = u_vec[len(free_dof_indices) + len(dependent_dof_indices):]
 
-        f_1 = f_vec[:len(free_dof_indices)] #TODO
-        f_D = f_vec[len(free_dof_indices):len(free_dof_indices) + len(dependent_dof_indices)] #TODO
+        f_1 = f_vec[:len(free_dof_indices)]
+        f_D = f_vec[len(free_dof_indices):len(free_dof_indices) + len(dependent_dof_indices)]
 
-        # now we need to assamble the global stiffness matrix K
-        # we will devide it into 3 parts:
+        # now we need to assemble the global stiffness matrix K
+        # we will divide it into 3 parts:
         # K11 - free DOFs, K1D - dependent DOFs, K12 - fixed DOFs, only the horizontal part is needed
 
         raw_K_matrix = lil_matrix((total_dof_count, total_dof_count))
@@ -190,13 +181,11 @@ class TrussSolver:
         KD1 = raw_K_matrix[dep_idx][:, free_idx]
         KDD = raw_K_matrix[dep_idx][:, dep_idx]
 
-        ASSAMBLED_K = K11 + XD1.T @ KD1 + K1D @ XD1 + XD1.T @ KDD @ XD1
+        assembled_K = K11 + XD1.T @ KD1 + K1D @ XD1 + XD1.T @ KDD @ XD1
 
-        ASSAMBLED_F = -1 * ( (K1D @ XD2 + XD1.T @ KDD @ XD2) @ u_fixed + (K1D + XD1.T @ KDD) @ a_dependant_vec - f_1 - XD1.T @ f_D )
+        assembled_F = -1 * ( (K1D @ XD2 + XD1.T @ KDD @ XD2) @ u_fixed + (K1D + XD1.T @ KDD) @ a_dependant_vec - f_1 - XD1.T @ f_D )
 
-        u_free_solved = spsolve(ASSAMBLED_K, ASSAMBLED_F)
-
-        #print(f"Solved free displacements: {u_free_solved}")
+        u_free_solved = spsolve(assembled_K, assembled_F)
 
         # Update the full displacement vector
         u_vec_solved = np.zeros(total_dof_count)
@@ -204,9 +193,7 @@ class TrussSolver:
         u_vec_solved[dependent_dof_indices] = XD1.dot(u_free_solved) + XD2.dot(u_fixed) + a_dependant_vec
         u_vec_solved[fixed_dof_indices] = np.array(u_fixed).flatten()
 
-        #print(f"Complete displacement vector: {u_vec_solved}")
-
-        suma = []
+        stress_contributions = []
 
         for element in self.truss.elements:
             element.set_local_deformations(u_vec_solved)
@@ -214,8 +201,16 @@ class TrussSolver:
             forces = element.forces_vector()
 
             value = element.magnitude() * element.axial_force() * np.multiply.outer(forces, forces)
-            suma.append(value)
+            stress_contributions.append(value)
 
-        result = 1 / self.truss.volume * sum(suma)
-        print("Result:")
-        print(result)
+        result = 1 / self.truss.volume * sum(stress_contributions)
+        # print("Result:")
+        # print(result)
+        
+        # Extract stress components (xx, yy, xy) from the 2x2 result matrix
+        return np.array([
+            result[0, 0],  # xx
+            result[1, 1],  # yy
+            result[0, 1] * 2  # xy
+        ])
+    

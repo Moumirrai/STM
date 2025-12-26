@@ -1,0 +1,45 @@
+{
+  "nodes": [
+    {"dx": "0.00", "dy": "0.00", "deformations": {}, "loads": {}},
+    {"dx": "0.02", "dy": "0.00", "deformations": {}, "loads": {}},
+    {"dx": "0.00", "dy": "0.01", "deformations": {}, "loads": {}},
+    {"dx": "0.02", "dy": "0.01", "deformations": {}, "loads": {}},
+    {"dx": "0.018", "dy": "0.008", "constraints": "xy", "deformations": {}, "loads": {}}
+  ],
+  "elements": [
+    {"starting_node": 0, "ending_node": 1},
+    {"starting_node": 0, "ending_node": 2},
+    {"starting_node": 1, "ending_node": 3},
+    {"starting_node": 2, "ending_node": 3},
+    {"starting_node": 1, "ending_node": 4},
+    {"starting_node": 2, "ending_node": 4},
+    {"starting_node": 3, "ending_node": 4},
+    {"starting_node": 0, "ending_node": 4}
+  ],
+  "dependencies": [
+    {
+      "node": 3,
+      "masters": [
+        {"node": 0, "direction": "x", "factor": 1.0, "eigenstrain": true},
+        {"node": 0, "direction": "y", "factor": 1.0, "eigenstrain": true}
+      ]
+    },
+    {
+      "node": 1,
+      "masters": [
+        {"node": 0, "direction": "x", "factor": 1.0, "eigenstrain": true},
+        {"node": 0, "direction": "y", "factor": 1.0, "eigenstrain": true}
+      ]
+    },
+    {
+      "node": 2,
+      "masters": [
+        {"node": 0, "direction": "x", "factor": 1.0, "eigenstrain": true},
+        {"node": 0, "direction": "y", "factor": 1.0, "eigenstrain": true}
+      ]
+    }
+  ],
+  "volume": 0.01,
+  "defaultCrossSectionArea": 0.000001,
+  "defaultYoungsModulus": 210e6
+}

@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
-from scipy.sparse import lil_matrix, linalg
+from typing import List, Optional
 from scipy.sparse import csc_array
 import numpy as np
 
@@ -40,9 +39,10 @@ class Dependency:
 class Element:
     nodes: tuple[Node, Node]
     E: float = 210e6
-    A: float = 0.01
+    A: float = 0.000004
     local_deformations: Optional[np.ndarray] = None
     _stiffness_matrix: Optional[np.ndarray] = None
+    _cos_sin: Optional[tuple[float, float]] = None
 
     def __post_init__(self):
         displacements = np.array([
@@ -60,8 +60,6 @@ class Element:
             self.nodes[1].load_x += forces[2]
             self.nodes[1].load_y += forces[3]
 
-        #print(f"Initial forces for nodes {self.nodes[0].index} and {self.nodes[1].index} are {self.nodes[0].load_x}, {self.nodes[0].load_y}, {self.nodes[1].load_x}, {self.nodes[1].load_y}")
-
     def getDOFs(self) -> List[int]:
         dofs = []
         for node in self.nodes:
@@ -77,6 +75,9 @@ class Element:
         ) ** 0.5
 
     def get_cos_sin(self) -> tuple[float, float]:
+        if self._cos_sin is not None:
+            return self._cos_sin
+            
         vector_ab = (
             self.nodes[1].dx - self.nodes[0].dx,
             self.nodes[1].dy - self.nodes[0].dy,
@@ -86,7 +87,8 @@ class Element:
         cos = vector_ab[0] / length
         sin = vector_ab[1] / length
 
-        return cos, sin
+        self._cos_sin = (cos, sin)
+        return self._cos_sin
 
     def stiffness(
             self,
@@ -140,4 +142,3 @@ class TrussData:
     elements: List[Element]
     constrained_dofs_count: int
     volume: float
-    eigenstrainVector: Optional[np.ndarray] = (0, 0, 0)

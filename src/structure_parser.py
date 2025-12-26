@@ -1,17 +1,20 @@
 import json
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 import math
 
-from models import TrussData, Node, Dependency, MasterNode, Element
+from models import TrussData, Node, Dependency, MasterNode, Element 
 
 
-def parse_json_file(file_path: str) -> TrussData:
+def parse_json_file(file_path: str, explicitEigenStrain: Optional[np.ndarray] = None) -> TrussData:
     with open(file_path) as f:
         data = json.load(f)
 
     total_constraints = 0
+    
+    default_E = data.get("defaultYoungsModulus", 210e6)
+    default_A = data.get("defaultCrossSectionArea", 0.000004)
 
     nodes: List[Node] = []
     for i, node_data in enumerate(data["nodes"]):
@@ -44,29 +47,31 @@ def parse_json_file(file_path: str) -> TrussData:
 
         nodes.append(new_node)
 
-    eigenstrain_data = data.get("eigenstrain", {})
-    eigenstrain_vector = np.array([
-        eigenstrain_data.get("x", 0.0),
-        eigenstrain_data.get("y", 0.0),
-        eigenstrain_data.get("angle", 0.0)
-    ])
+    if explicitEigenStrain is not None:
+        eigenstrain_vector = explicitEigenStrain
+    else:
+        eigenstrain_data = data.get("eigenstrain", {})
+        eigenstrain_vector = np.array([
+            eigenstrain_data.get("x", 0.0),
+            eigenstrain_data.get("y", 0.0),
+            eigenstrain_data.get("angle", 0.0)
+        ])
 
     for i, dependency in enumerate(data.get("dependencies", [])):
         node_index = dependency["node"]
         node = nodes[node_index]
         
+        if len(dependency["masters"]) == 0:
+            print(f"Warning: Dependency {i} for node {node_index} has no masters.")
+            continue
+
         if node.dependency is None:
             node.dependency = Dependency(
-                masters= [],
+                masters=[],
                 dependant_x=False,
                 dependant_y=False,
                 dependency_index=i
             )
-
-
-        if len(dependency["masters"]) == 0:
-            print(f"Warning: Dependency {i} for node {node_index} has no masters.")
-            continue
 
         master_nodes = []
         for master_data in dependency["masters"]:
@@ -101,6 +106,8 @@ def parse_json_file(file_path: str) -> TrussData:
                 nodes[int(element["starting_node"])],
                 nodes[int(element["ending_node"])],
             ),
+            E=element.get("E", default_E),
+            A=element.get("A", default_A)
         )
         for element in data["elements"]
     ]

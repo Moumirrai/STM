@@ -1,0 +1,161 @@
+{
+  "$schema": "./input.schema.json",
+  "nodes": [
+    { "dx": "0.00", "dy": "0.00" },
+    { "dx": "0.01", "dy": "0.00" },
+    { "dx": "0.02", "dy": "0.00" },
+    { "dx": "0.03", "dy": "0.00" },
+    { "dx": "0.04", "dy": "0.00" },
+    { "dx": "0.00", "dy": "0.01" },
+    { "dx": "0.01", "dy": "0.01" },
+    { "dx": "0.02", "dy": "0.01" },
+    { "dx": "0.03", "dy": "0.01" },
+    { "dx": "0.04", "dy": "0.01" },
+    { "dx": "0.00", "dy": "0.02" },
+    { "dx": "0.01", "dy": "0.02" },
+    { "dx": "0.02", "dy": "0.02", "constraints": "xy" },
+    { "dx": "0.03", "dy": "0.02" },
+    { "dx": "0.04", "dy": "0.02" },
+    { "dx": "0.00", "dy": "0.03" },
+    { "dx": "0.01", "dy": "0.03" },
+    { "dx": "0.02", "dy": "0.03" },
+    { "dx": "0.03", "dy": "0.03" },
+    { "dx": "0.04", "dy": "0.03" },
+    { "dx": "0.00", "dy": "0.04" },
+    { "dx": "0.01", "dy": "0.04" },
+    { "dx": "0.02", "dy": "0.04" },
+    { "dx": "0.03", "dy": "0.04" },
+    { "dx": "0.04", "dy": "0.04" }
+  ],
+  "dependencies": [
+    {
+      "node": 4,
+      "masters": [
+        { "node": 0, "direction": "x", "factor": 1 },
+        { "node": 0, "direction": "y", "factor": 1 }
+      ]
+    },
+    {
+      "node": 20,
+      "masters": [
+        { "node": 0, "direction": "x", "factor": 1 },
+        { "node": 0, "direction": "y", "factor": 1 }
+      ]
+    },
+    {
+      "node": 24,
+      "masters": [
+        { "node": 0, "direction": "x", "factor": 1 },
+        { "node": 0, "direction": "y", "factor": 1 }
+      ]
+    },
+    {
+      "node": 21,
+      "masters": [
+        { "node": 1, "direction": "x", "factor": 1 },
+        { "node": 1, "direction": "y", "factor": 1 }
+      ]
+    },
+    {
+      "node": 22,
+      "masters": [
+        { "node": 2, "direction": "x", "factor": 1 },
+        { "node": 2, "direction": "y", "factor": 1 }
+      ]
+    },
+    {
+      "node": 23,
+      "masters": [
+        { "node": 3, "direction": "x", "factor": 1 },
+        { "node": 3, "direction": "y", "factor": 1 }
+      ]
+    },
+    {
+      "node": 9,
+      "masters": [
+        { "node": 5, "direction": "x", "factor": 1 },
+        { "node": 5, "direction": "y", "factor": 1 }
+      ]
+    },
+    {
+      "node": 14,
+      "masters": [
+        { "node": 10, "direction": "x", "factor": 1 },
+        { "node": 10, "direction": "y", "factor": 1 }
+      ]
+    },
+    {
+      "node": 19,
+      "masters": [
+        { "node": 15, "direction": "x", "factor": 1 },
+        { "node": 15, "direction": "y", "factor": 1 }
+      ]
+    }
+  ],
+  "elements": [
+    { "starting_node": 0, "ending_node": 1 },
+    { "starting_node": 1, "ending_node": 2 },
+    { "starting_node": 2, "ending_node": 3 },
+    { "starting_node": 3, "ending_node": 4 },
+    { "starting_node": 5, "ending_node": 6 },
+    { "starting_node": 6, "ending_node": 7 },
+    { "starting_node": 7, "ending_node": 8 },
+    { "starting_node": 8, "ending_node": 9 },
+    { "starting_node": 10, "ending_node": 11 },
+    { "starting_node": 11, "ending_node": 12 },
+    { "starting_node": 12, "ending_node": 13 },
+    { "starting_node": 13, "ending_node": 14 },
+    { "starting_node": 15, "ending_node": 16 },
+    { "starting_node": 16, "ending_node": 17 },
+    { "starting_node": 17, "ending_node": 18 },
+    { "starting_node": 18, "ending_node": 19 },
+    { "starting_node": 20, "ending_node": 21 },
+    { "starting_node": 21, "ending_node": 22 },
+    { "starting_node": 22, "ending_node": 23 },
+    { "starting_node": 23, "ending_node": 24 },
+    { "starting_node": 0, "ending_node": 5 },
+    { "starting_node": 5, "ending_node": 10 },
+    { "starting_node": 10, "ending_node": 15 },
+    { "starting_node": 15, "ending_node": 20 },
+    { "starting_node": 1, "ending_node": 6 },
+    { "starting_node": 6, "ending_node": 11 },
+    { "starting_node": 11, "ending_node": 16 },
+    { "starting_node": 16, "ending_node": 21 },
+    { "starting_node": 2, "ending_node": 7 },
+    { "starting_node": 7, "ending_node": 12 },
+    { "starting_node": 12, "ending_node": 17 },
+    { "starting_node": 17, "ending_node": 22 },
+    { "starting_node": 3, "ending_node": 8 },
+    { "starting_node": 8, "ending_node": 13 },
+    { "starting_node": 13, "ending_node": 18 },
+    { "starting_node": 18, "ending_node": 23 },
+    { "starting_node": 4, "ending_node": 9 },
+    { "starting_node": 9, "ending_node": 14 },
+    { "starting_node": 14, "ending_node": 19 },
+    { "starting_node": 19, "ending_node": 24 },
+    { "starting_node": 0, "ending_node": 6 },
+    { "starting_node": 1, "ending_node": 7 },
+    { "starting_node": 2, "ending_node": 8 },
+    { "starting_node": 3, "ending_node": 9 },
+    { "starting_node": 5, "ending_node": 11 },
+    { "starting_node": 6, "ending_node": 12 },
+    { "starting_node": 7, "ending_node": 13 },
+    { "starting_node": 8, "ending_node": 14 },
+    { "starting_node": 10, "ending_node": 16 },
+    { "starting_node": 11, "ending_node": 17 },
+    { "starting_node": 12, "ending_node": 18 },
+    { "starting_node": 13, "ending_node": 19 },
+    { "starting_node": 15, "ending_node": 21 },
+    { "starting_node": 16, "ending_node": 22 },
+    { "starting_node": 17, "ending_node": 23 },
+    { "starting_node": 18, "ending_node": 24 }
+  ],
+  "eigenstrain": {
+    "x": 1,
+    "y": 0,
+    "angle": 0
+  },
+  "volume": 0.01,
+  "defaultCrossSectionArea": 0.000001,
+  "defaultYoungsModulus": 210e6
+}

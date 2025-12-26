@@ -1,0 +1,86 @@
+{
+  "$schema": "./input.schema.json",
+  "nodes": [
+    { "dx": "0.00", "dy": "0.00" },
+    { "dx": "0.01", "dy": "0.00" },
+    { "dx": "0.02", "dy": "0.00" },
+    { "dx": "0.00", "dy": "0.01" },
+    { "dx": "0.02", "dy": "0.01" },
+    { "dx": "0.00", "dy": "0.02" },
+    { "dx": "0.01", "dy": "0.02" },
+    { "dx": "0.02", "dy": "0.02" },
+    { "dx": "0.003", "dy": "0.002", "constraints": "xy" },
+    { "dx": "0.017", "dy": "0.004" },
+    { "dx": "0.004", "dy": "0.018" },
+    { "dx": "0.012", "dy": "0.007" }
+  ],
+  "dependencies": [
+    {
+      "node": 2,
+      "masters": [
+        { "node": 0, "direction": "x", "factor": 1 },
+        { "node": 0, "direction": "y", "factor": 1 }
+      ]
+    },
+    {
+      "node": 7,
+      "masters": [
+        { "node": 0, "direction": "x", "factor": 1 },
+        { "node": 0, "direction": "y", "factor": 1 }
+      ]
+    },
+    {
+      "node": 5,
+      "masters": [
+        { "node": 0, "direction": "x", "factor": 1 },
+        { "node": 0, "direction": "y", "factor": 1 }
+      ]
+    },
+    {
+      "node": 6,
+      "masters": [
+        { "node": 1, "direction": "x", "factor": 1 },
+        { "node": 1, "direction": "y", "factor": 1 }
+      ]
+    },
+    {
+      "node": 4,
+      "masters": [
+        { "node": 3, "direction": "x", "factor": 1 },
+        { "node": 3, "direction": "y", "factor": 1 }
+      ]
+    }
+  ],
+  "elements": [
+    { "starting_node": 0, "ending_node": 1 },
+    { "starting_node": 2, "ending_node": 4 },
+    { "starting_node": 4, "ending_node": 7 },
+    { "starting_node": 6, "ending_node": 5 },
+    { "starting_node": 5, "ending_node": 3 },
+    { "starting_node": 0, "ending_node": 8 },
+    { "starting_node": 8, "ending_node": 1 },
+    { "starting_node": 2, "ending_node": 9 },
+    { "starting_node": 9, "ending_node": 1 },
+    { "starting_node": 8, "ending_node": 3 },
+    { "starting_node": 3, "ending_node": 1 },
+    { "starting_node": 3, "ending_node": 9 },
+    { "starting_node": 9, "ending_node": 4 },
+    { "starting_node": 9, "ending_node": 11 },
+    { "starting_node": 11, "ending_node": 4 },
+    { "starting_node": 11, "ending_node": 7 },
+    { "starting_node": 11, "ending_node": 6 },
+    { "starting_node": 6, "ending_node": 10 },
+    { "starting_node": 10, "ending_node": 5 },
+    { "starting_node": 10, "ending_node": 3 },
+    { "starting_node": 10, "ending_node": 11 },
+    { "starting_node": 11, "ending_node": 3 }
+  ],
+  "eigenstrain": {
+    "x": 0.001,
+    "y": 0.001,
+    "angle": 0.001
+  },
+  "volume": 0.01,
+  "defaultCrossSectionArea": 0.000001,
+  "defaultYoungsModulus": 210e6
+}
