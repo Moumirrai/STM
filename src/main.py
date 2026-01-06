@@ -46,20 +46,16 @@ def compute_D(params):
         [0, 0, 1 - v]
     ])
 
-# Residuals function: flattened differences between predicted D and Ds columns
 def residuals(params):
     D_pred = compute_D(params)
     diff = (D_pred - Ds).flatten()
-    return diff / (np.linalg.norm(Ds) + 1e-10)
+    # we divide the difference by the norm of Ds to normalize the residuals for better numerical stability and cost scale
+    return diff / (np.linalg.norm(Ds) + 1e-10) # add small value to avoid division by zero
+    #return diff # same results without cost normalization
 
 # initial guesses and bounds
 initial_guess = [210e6, 0.4]  # E in Pa, v dimensionless
-bounds = ([1e6, 0], [1e12, 0.5])
-
-# check initial residuals
-# initial_residuals = residuals(initial_guess)
-# print(f"Initial residuals: {initial_residuals}")
-# print(f"Initial cost: {np.sum(initial_residuals**2)}")
+bounds = ([1e2, 0], [1e12, 0.5])
 
 result = least_squares(residuals, initial_guess, bounds=bounds)
 fitted_E, fitted_v = result.x

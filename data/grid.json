@@ -155,7 +155,7 @@
     "y": 0,
     "angle": 0
   },
-  "volume": 0.01,
+  "volume": 0.0016,
   "defaultCrossSectionArea": 0.000001,
   "defaultYoungsModulus": 210e6
 }

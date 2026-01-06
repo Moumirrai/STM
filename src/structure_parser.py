@@ -98,7 +98,7 @@ def parse_json_file(file_path: str, explicitEigenStrain: Optional[np.ndarray] = 
 
         node.dependency.masters.extend(master_nodes)
 
-    volume = data.get("volume", 1.0)
+    volume = data.get("volume", 1.0) # TODO: calculate volume from gemotry if not provided
 
     elements = [
         Element(

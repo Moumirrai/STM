@@ -200,7 +200,7 @@ class TrussSolver:
 
             forces = element.forces_vector()
 
-            value = element.magnitude() * element.axial_force() * np.multiply.outer(forces, forces)
+            value = element.magnitude() * element.axial_force() * np.multiply.outer(element.get_cos_sin(),element.get_cos_sin())
             stress_contributions.append(value)
 
         result = 1 / self.truss.volume * sum(stress_contributions)
