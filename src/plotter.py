@@ -1,7 +1,6 @@
 import numpy as np
 
 from models import TrussData
-import pyvista as pv
 from termcolor import colored
 
 def export_vtk(truss: TrussData):
@@ -38,8 +37,3 @@ def export_vtk(truss: TrussData):
     lines = np.array([[2, element.nodes[0].index, element.nodes[1].index] for element in truss.elements]).flatten()
 
     # construct PolyData with points and lines to avoid assignment-type mismatch
-    poly = pv.PolyData(points, lines)
-    poly.point_data['displacement'] = displacements
-    poly.cell_data['axial_force'] = forces
-
-    poly.save("output.vtp", binary=True)
