@@ -82,7 +82,7 @@ def parse_json_file(file_path: str, explicitEigenStrain: Optional[np.ndarray] = 
             else:
                 node.dependency.dependant_y = True
 
-            if master_data.get("eigenstrain"): # this is correct, we default to True if not specified
+            if master_data.get("eigenstrain") != False: # this is correct, we default to True if not specified
                 master_node = nodes[master_data["node"]]
 
                 if direction == 0:  # x direction

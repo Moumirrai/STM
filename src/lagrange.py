@@ -1,5 +1,5 @@
 from models import TrussData
-from solver import TrussSolver
+from solver_lagrange import LagrangeTrussSolver
 from plotter import export_vtk
 from structure_parser import parse_json_file
 import numpy as np
@@ -13,7 +13,7 @@ np.set_printoptions(
 
 truss: TrussData = parse_json_file('./data/grid.json')
 
-solver = TrussSolver(truss)
+solver = LagrangeTrussSolver(truss)
 
 res = solver.solve()
 
@@ -29,13 +29,13 @@ results = []
 
 for eigenstrain in eigenstrainSets:
     truss: TrussData = parse_json_file('./data/grid.json', explicitEigenStrain=eigenstrain)
-    solver = TrussSolver(truss)
+    solver = LagrangeTrussSolver(truss)
     res = solver.solve()
     results.append(res)
 
 Ds = np.array(results).T
 
-print(colored(f"D matrix from DOF elimination solver:\n{Ds}\n", "cyan"))
+print(colored(f"D matrix from lagrange solver:\n{Ds}\n", "cyan"))
 
 def compute_D(params):
     E, v = params
