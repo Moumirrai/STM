@@ -1,6 +1,5 @@
 from models import TrussData
 from solver_lagrange import LagrangeTrussSolver
-from plotter import export_vtk
 from structure_parser import parse_json_file
 import numpy as np
 from scipy.optimize import least_squares
@@ -16,6 +15,8 @@ truss: TrussData = parse_json_file('./data/grid.json')
 solver = LagrangeTrussSolver(truss)
 
 res = solver.solve()
+
+print(colored(f"Lambdas from solver:\n{solver.lambdas}\n", "light_yellow"))
 
 #export_vtk(truss)
 

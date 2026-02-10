@@ -20,6 +20,7 @@ class DependentConstraint:
     eigenstrain: np.ndarray
 
 class LagrangeTrussSolver:
+    lambdas: List[float]
     def __init__(self, truss: TrussData):
         self.truss = truss
 
@@ -117,7 +118,7 @@ class LagrangeTrussSolver:
 
         u_vec_solved = u_aug[:total_dof_count]
 
-        lambdas = u_aug[total_dof_count:]
+        self.lambdas = u_aug[total_dof_count:]
 
         #dump_matrix_to_csv(K_aug, "debug_export.csv")
 
