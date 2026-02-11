@@ -98,7 +98,12 @@ def parse_json_file(file_path: str, explicitEigenStrain: Optional[np.ndarray] = 
 
         node.dependency.masters.extend(master_nodes)
 
-    volume = data.get("volume", 1.0) # TODO: calculate volume from gemotry if not provided
+    #volume = data.get("volume", 1.0) # TODO: calculate volume from gemotry if not provided
+    max_x = max(node.dx for node in nodes)
+    max_y = max(node.dy for node in nodes)
+    min_x = min(node.dx for node in nodes)
+    min_y = min(node.dy for node in nodes)
+    volume = (max_x - min_x) * (max_y - min_y)
 
     elements = [
         Element(
