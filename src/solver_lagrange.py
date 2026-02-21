@@ -137,8 +137,6 @@ class LagrangeTrussSolver:
             stress_contributions.append(value)
 
         result = 1 / self.truss.volume * sum(stress_contributions)
-        # print("Result:")
-        # print(result)
 
         # Extract stress components (xx, yy, xy) from the 2x2 result matrix
         return np.array(
