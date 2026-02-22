@@ -2,23 +2,29 @@ import numpy as np
 from scipy.optimize import least_squares
 from termcolor import colored
 
+from generator import create_tie_structure_angle
 from models import TrussData
 from plotter import export_vtk
 from solver import TrussSolver
-from structure_parser import parse_json_file
+from structure_parser import parse_json_file, parse_structure_data
 
 np.set_printoptions(
     linewidth=250,
 )
 
+trussData = create_tie_structure_angle(0.2, 0.4, 15)
 
-truss: TrussData = parse_json_file("./data/grid.json")
+truss: TrussData = parse_structure_data(
+    trussData, explicitEigenStrain=np.array([1.0, 0.0, 0.0])
+)
+
+#truss: TrussData = parse_json_file("./data/grid.json")
 
 solver = TrussSolver(truss)
 
 res = solver.solve()
 
-# export_vtk(truss)
+export_vtk(truss)
 
 eigenstrainSets = [
     np.array([1, 0, 0]),

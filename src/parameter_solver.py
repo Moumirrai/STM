@@ -82,7 +82,7 @@ def solveParameters_orto(structure: StructureDefinition):
 
     Ds = np.array(results).T
 
-    print(colored(f"D matrix from DOF elimination solver:\n{Ds}\n", "cyan"))
+    #print(colored(f"D matrix from DOF elimination solver:\n{Ds}\n", "cyan"))
 
     def compute_D(params):
         Ex, Ey, vxy, vyx, Gxy = params

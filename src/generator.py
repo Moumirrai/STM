@@ -1,3 +1,5 @@
+import math
+
 from structure_parser import EigenstrainDefinition, ElementDefinition, NodeDefinition, StructureDefinition, MasterDefinition, DependencyDefinition
 
 
@@ -82,6 +84,82 @@ def create_tie_structure(x: float) -> StructureDefinition:
         NodeDefinition(dx=width/2, dy=height/2 + x/2, constraints="xy"),
         
         NodeDefinition(dx=width/2, dy=height + height / 2 - x/2),
+    ]
+    
+    elements = [
+        ElementDefinition(starting_node=0, ending_node=1),
+        ElementDefinition(starting_node=2, ending_node=3),
+        ElementDefinition(starting_node=0, ending_node=4),
+        ElementDefinition(starting_node=2, ending_node=4),
+        ElementDefinition(starting_node=4, ending_node=5),
+        ElementDefinition(starting_node=1, ending_node=5),
+        ElementDefinition(starting_node=3, ending_node=5),
+        ElementDefinition(starting_node=5, ending_node=6)
+    ]
+    
+    dependencies = [
+        DependencyDefinition(
+            node=3,
+            masters=[
+                MasterDefinition(node=0, direction="x", factor=1.0),
+                MasterDefinition(node=0, direction="y", factor=1.0)
+            ]
+        ),
+        DependencyDefinition(
+            node=2,
+            masters=[
+                MasterDefinition(node=0, direction="x", factor=1.0),
+                MasterDefinition(node=0, direction="y", factor=1.0)
+            ]
+        ),
+        DependencyDefinition(
+            node=1,
+            masters=[
+                MasterDefinition(node=0, direction="x", factor=1.0),
+                MasterDefinition(node=0, direction="y", factor=1.0)
+            ]
+        ),
+        DependencyDefinition(
+            node=6,
+            masters=[
+                MasterDefinition(node=4, direction="x", factor=1.0),
+                MasterDefinition(node=4, direction="y", factor=1.0)
+            ]
+        )
+    ]
+    
+    return StructureDefinition(
+        nodes=nodes,
+        elements=elements,
+        dependencies=dependencies,
+        eigenstrain=EigenstrainDefinition(x=1.0, y=0.0, angle=1.0),
+    )
+    
+def calculate_intersection(height: float, width: float, angle: float):
+    # Middle of the structure
+    x_middle = width / 2
+
+    # Slope of the line
+    slope = math.tan(math.radians(angle))
+
+    y_intersection = slope * x_middle
+
+    return x_middle, y_intersection
+    
+def create_tie_structure_angle(height: float, width: float, angle: float) -> StructureDefinition:
+    
+    x, y = calculate_intersection(height, width, angle)
+    
+    nodes = [
+        NodeDefinition(dx=0, dy=0),
+        NodeDefinition(dx=0, dy=height),
+        NodeDefinition(dx=width, dy=0),
+        NodeDefinition(dx=width, dy=height),
+        
+        NodeDefinition(dx=x, dy=y),
+        NodeDefinition(dx=x, dy=height-y, constraints="xy"),
+        
+        NodeDefinition(dx=x, dy=height + y),
     ]
     
     elements = [
