@@ -127,8 +127,6 @@ class LagrangeTrussSolver:
         for element in self.truss.elements:
             element.set_local_deformations(u_vec_solved)
 
-            forces = element.forces_vector()
-
             value = (
                 element.magnitude()
                 * element.axial_force()

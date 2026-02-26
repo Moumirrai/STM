@@ -156,8 +156,8 @@ def create_tie_structure_angle(height: float, width: float, angle: float) -> Str
         NodeDefinition(dx=width, dy=0),
         NodeDefinition(dx=width, dy=height),
         
-        NodeDefinition(dx=x, dy=y),
-        NodeDefinition(dx=x, dy=height-y, constraints="xy"),
+        NodeDefinition(dx=x, dy=y, constraints="yx"),
+        NodeDefinition(dx=x, dy=height-y, constraints="x"),
         
         NodeDefinition(dx=x, dy=height + y),
     ]
@@ -175,13 +175,6 @@ def create_tie_structure_angle(height: float, width: float, angle: float) -> Str
     
     dependencies = [
         DependencyDefinition(
-            node=3,
-            masters=[
-                MasterDefinition(node=0, direction="x", factor=1.0),
-                MasterDefinition(node=0, direction="y", factor=1.0)
-            ]
-        ),
-        DependencyDefinition(
             node=2,
             masters=[
                 MasterDefinition(node=0, direction="x", factor=1.0),
@@ -191,8 +184,8 @@ def create_tie_structure_angle(height: float, width: float, angle: float) -> Str
         DependencyDefinition(
             node=1,
             masters=[
-                MasterDefinition(node=0, direction="x", factor=1.0),
-                MasterDefinition(node=0, direction="y", factor=1.0)
+                MasterDefinition(node=3, direction="x", factor=1.0),
+                MasterDefinition(node=3, direction="y", factor=1.0)
             ]
         ),
         DependencyDefinition(

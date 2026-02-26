@@ -12,7 +12,7 @@ np.set_printoptions(
     linewidth=250,
 )
 
-trussData = create_tie_structure_angle(0.2, 0.4, 15)
+trussData = create_tie_structure_angle(0.2, 0.2, 40)
 
 truss: TrussData = parse_structure_data(
     trussData, explicitEigenStrain=np.array([1.0, 0.0, 0.0])
@@ -25,6 +25,8 @@ solver = TrussSolver(truss)
 res = solver.solve()
 
 export_vtk(truss)
+
+exit(0)
 
 eigenstrainSets = [
     np.array([1, 0, 0]),

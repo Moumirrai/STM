@@ -10,10 +10,10 @@ from parameter_solver import solveParameters_iso, solveParameters_orto
 import matplotlib.pyplot as plt
 
 height = 0.1
-width = height * 2
+width = height * 1
 max_angle = math.degrees(math.atan(height / width))
 
-x = np.linspace(0.001, max_angle, 100, endpoint=False)
+x = np.linspace(0.001, max_angle, 50, endpoint=False)
 
 results = []
 total = len(x)
@@ -34,6 +34,8 @@ np.savetxt(
     "output.csv", np.column_stack((x, Ex, Ey, vxy, vyx, Gxy)), delimiter=",", comments=""
 )
 
-plt.plot(x, vxy)
-plt.plot(x, vyx)
+plt.plot(x, vxy, label="vxy")
+plt.plot(x, vyx, label="vyx")
+plt.xlabel("Angle")
+plt.legend()
 plt.show()

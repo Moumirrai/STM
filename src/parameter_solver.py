@@ -82,7 +82,7 @@ def solveParameters_orto(structure: StructureDefinition):
 
     Ds = np.array(results).T
 
-    #print(colored(f"D matrix from DOF elimination solver:\n{Ds}\n", "cyan"))
+    print(colored(f"D matrix from DOF elimination solver:\n{Ds}\n", "cyan"))
 
     def compute_D(params):
         Ex, Ey, vxy, vyx, Gxy = params
@@ -106,11 +106,28 @@ def solveParameters_orto(structure: StructureDefinition):
 
     # initial guesses and bounds
     initial_guess = [210e6, 210e6, 0.4, 0.4, 21e6]  # E in Pa, v dimensionless
-    bounds = ([1e2, 1e2, 0, 0, 0], [1e12, 1e12, 0.5, 0.5, 1e12])
+    bounds = ([1e2, 1e2, -1, -1, 0], [1e12, 1e12, 0.5, 0.5, 1e12])
 
     result = least_squares(residuals, initial_guess, bounds=bounds)
     f_Ex, f_Ey, f_vxy, f_vyx, f_Gxy = result.x
 
     D_fitted = compute_D([f_Ex, f_Ey, f_vxy, f_vyx, f_Gxy])
+
+    print(colored(f"Fitted D matrix:\n{D_fitted}\n", "light_green"))
+
+    print(f" Fitted parameters: ", end="")
+    print(
+        colored(
+            f" Ex = {f_Ex:.2e} Pa \t Ey = {f_Ey:.2e} Pa \t vxy = {f_vxy:.3f} \t vyx = {f_vyx:.3f} \t Gxy = {f_Gxy:.2e} Pa ",
+            "black",
+            "on_light_green",
+        )
+    )
+
+    podil = Ds[1, 0] / Ds[1, 1]
+    podil2 = Ds[0, 1] / Ds[0, 0]
+    print(podil2)
+    print(podil)
+
 
     return f_Ex, f_Ey, f_vxy, f_vyx, f_Gxy
