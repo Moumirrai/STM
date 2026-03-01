@@ -11,24 +11,9 @@ def generateStructure(width, height, num_points, point_radius):
     # Start with one random point, then for each next check if it is at least
     # 2 * point_radius away from all existing points; if not, generate a new point.
     # Limit attempts to 1000; if it fails to generate after that, return what we have.
+    expandedDomainPoints = []
     innerPoints = []
     
-    attempts = 0
-    min_distance_squared = (2 * point_radius) ** 2
-    while len(innerPoints) < num_points and attempts < 1000:
-        x = uniform(point_radius, width - point_radius)
-        y = uniform(point_radius, height - point_radius)
-        new_point = (x, y)
-        if all(
-            (x - p[0]) ** 2 + (y - p[1]) ** 2 >= min_distance_squared
-            #math.sqrt((x - p[0]) ** 2 + (y - p[1]) ** 2) >= 2 * point_radius
-            for p in innerPoints
-        ):
-            innerPoints.append(new_point)
-            attempts = 0  # reset attempts after a successful addition
-        else:
-            attempts += 1
-
     tile_offsets = (
         (0.0, 0.0),
         (width, 0.0),
@@ -40,6 +25,29 @@ def generateStructure(width, height, num_points, point_radius):
         (width, -height),
         (-width, -height),
     )
+    
+    attempts = 0
+    min_distance_squared = (2 * point_radius) ** 2
+    while len(innerPoints) < num_points and attempts < 1000:
+        x = uniform(0, width)
+        y = uniform(0, height)
+        new_point = (x, y)
+        if all(
+            (x - p[0]) ** 2 + (y - p[1]) ** 2 >= min_distance_squared for p in expandedDomainPoints
+        ):
+            innerPoints.append(new_point)
+            
+            for dx, dy in tile_offsets:
+                nx = x + dx
+                ny = y + dy
+                if nx >= 0 - 2*point_radius and nx <= width + 2*point_radius and ny >= 0 - 2*point_radius and ny <= height + 2*point_radius:
+                    expandedDomainPoints.append((nx, ny))
+            
+            attempts = 0  # reset attempts after a successful addition
+        else:
+            attempts += 1
+
+    
 
     tiled_points = []
     tiled_meta = []
@@ -54,6 +62,9 @@ def generateStructure(width, height, num_points, point_radius):
     periodic_edges = []
     seen_edges = set()
     seen_periodic = set()
+    print(vor.ridge_vertices[0])
+    print(vor.ridge_points[0:5])
+    print(vor.vertices[0:5])
     for (p1, p2), ridge_vertices in zip(vor.ridge_points, vor.ridge_vertices):
         if -1 in ridge_vertices:
             continue
@@ -89,7 +100,7 @@ def generateStructure(width, height, num_points, point_radius):
             periodic_edges.append((base_idx, other_idx, shift[0], shift[1], ridge_length))
             seen_periodic.add(key)
 
-    return (innerPoints, edges, periodic_edges)
+    return (innerPoints, edges, periodic_edges, expandedDomainPoints)
 
 # Call function and plot with matplotlib.
 if __name__ == "__main__":
@@ -103,7 +114,7 @@ if __name__ == "__main__":
     start = perf_counter()
     points = generateStructure(width, height, num_points, point_radius)
     elapsed = perf_counter() - start
-    innerPoints, edges, periodic_edges = points
+    innerPoints, edges, periodic_edges, expandedDomainPoints = points
     x, y = zip(*innerPoints)
     print(
         f"Generated {len(innerPoints)} inner points, {len(edges)} edges, "
@@ -112,7 +123,7 @@ if __name__ == "__main__":
 
 
     ax = plt.gca()
-    #ax.add_patch(Rectangle((0, 0), width, height, fill=False, linewidth=1))
+    ax.add_patch(Rectangle((0, 0), width, height, fill=False, linewidth=1))
     plt.scatter(x, y)
     for p1, p2, ridge_length in edges:
         x1, y1 = innerPoints[p1]
@@ -127,7 +138,7 @@ if __name__ == "__main__":
             linewidth=max(0.5, ridge_length),
             linestyle="--",
         )
-    for px, py in innerPoints:
+    for px, py in expandedDomainPoints:
         ax.add_patch(Circle((px, py), point_radius, fill=False, linewidth=1))
     plt.xlim(-width, 2 * width)
     plt.ylim(-height, 2 * height)
