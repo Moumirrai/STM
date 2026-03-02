@@ -3,8 +3,9 @@ from scipy.optimize import least_squares
 from termcolor import colored
 
 from generator import create_tie_structure_angle
+from vornoi_structure import generate_voronoi_structure
 from models import TrussData
-from plotter import export_vtk
+from plotter import export_vtk, export_vtk_to_file, plot_deformed_structure
 from solver import TrussSolver
 from structure_parser import parse_json_file, parse_structure_data
 
@@ -12,7 +13,8 @@ np.set_printoptions(
     linewidth=250,
 )
 
-trussData = create_tie_structure_angle(0.2, 0.2, 40)
+trussData = create_tie_structure_angle(0.1, 0.1, 45)
+#trussData = generate_voronoi_structure(10, 5, 1000, 0.2)
 
 truss: TrussData = parse_structure_data(
     trussData, explicitEigenStrain=np.array([1.0, 0.0, 0.0])
@@ -24,10 +26,6 @@ solver = TrussSolver(truss)
 
 res = solver.solve()
 
-export_vtk(truss)
-
-exit(0)
-
 eigenstrainSets = [
     np.array([1, 0, 0]),
     np.array([0, 1, 0]),
@@ -36,10 +34,13 @@ eigenstrainSets = [
 
 results = []
 
+plot_deformed_structure(truss)
+
+
 for eigenstrain in eigenstrainSets:
-    truss: TrussData = parse_json_file(
+    """ truss: TrussData = parse_json_file(
         "./data/grid.json", explicitEigenStrain=eigenstrain
-    )
+    ) """
     solver = TrussSolver(truss)
     res = solver.solve()
     results.append(res)

@@ -5,143 +5,215 @@ from time import perf_counter
 import numpy as np
 from scipy.spatial import Voronoi
 
+from structure_parser import DependencyDefinition, EigenstrainDefinition, ElementDefinition, MasterDefinition, NodeDefinition, StructureDefinition
+
+
+def _periodic_dist_sq(x1, y1, x2, y2, width, height):
+    dx = min(abs(x1 - x2), width - abs(x1 - x2))
+    dy = min(abs(y1 - y2), height - abs(y1 - y2))
+    return dx * dx + dy * dy
+
 
 def generateStructure(width, height, num_points, point_radius):
-    # In rect with width and height, generate num_points random points.
-    # Start with one random point, then for each next check if it is at least
-    # 2 * point_radius away from all existing points; if not, generate a new point.
-    # Limit attempts to 1000; if it fails to generate after that, return what we have.
-    expandedDomainPoints = []
-    innerPoints = []
-    
-    tile_offsets = (
-        (0.0, 0.0),
-        (width, 0.0),
-        (-width, 0.0),
-        (0.0, height),
-        (0.0, -height),
-        (width, height),
-        (-width, height),
-        (width, -height),
-        (-width, -height),
-    )
-    
+    # --- 1. Place points with minimum periodic separation (hard-disk packing) ---
+    base_points = []
+    min_dist_sq = (2 * point_radius) ** 2
     attempts = 0
-    min_distance_squared = (2 * point_radius) ** 2
-    while len(innerPoints) < num_points and attempts < 1000:
-        x = uniform(0, width)
-        y = uniform(0, height)
-        new_point = (x, y)
-        if all(
-            (x - p[0]) ** 2 + (y - p[1]) ** 2 >= min_distance_squared for p in expandedDomainPoints
-        ):
-            innerPoints.append(new_point)
-            
-            for dx, dy in tile_offsets:
-                nx = x + dx
-                ny = y + dy
-                if nx >= 0 - 2*point_radius and nx <= width + 2*point_radius and ny >= 0 - 2*point_radius and ny <= height + 2*point_radius:
-                    expandedDomainPoints.append((nx, ny))
-            
-            attempts = 0  # reset attempts after a successful addition
+
+    while len(base_points) < num_points and attempts < 1000:
+        x, y = uniform(0, width), uniform(0, height)
+        if all(_periodic_dist_sq(x, y, px, py, width, height) >= min_dist_sq
+               for px, py in base_points):
+            base_points.append((x, y))
+            attempts = 0
         else:
             attempts += 1
 
-    
+    # --- 2. Tile into 3x3 grid so every boundary cell is fully closed ---
+    # Each base point is copied to the 8 surrounding tiles plus the base tile itself.
+    # Every copy is tagged with its original index and the tile offset applied.
+    tile_offsets = [
+        (-width, -height), (0.0, -height), (width, -height),
+        (-width,  0.0),    (0.0,  0.0),    (width,  0.0),
+        (-width,  height), (0.0,  height), (width,  height),
+    ]
 
-    tiled_points = []
-    tiled_meta = []
-    for base_index, (x, y) in enumerate(innerPoints):
-        for dx, dy in tile_offsets:
-            tiled_points.append((x + dx, y + dy))
-            tiled_meta.append((base_index, dx, dy))
+    tiled_coords = []
+    tiled_meta = []  # (original_index, tile_offset_x, tile_offset_y)
+    for original_index, (x, y) in enumerate(base_points):
+        for tile_offset_x, tile_offset_y in tile_offsets:
+            tiled_coords.append((x + tile_offset_x, y + tile_offset_y))
+            tiled_meta.append((original_index, tile_offset_x, tile_offset_y))
 
-    vor = Voronoi(np.array(tiled_points))
+    vor = Voronoi(np.array(tiled_coords))
 
-    edges = []
-    periodic_edges = []
-    seen_edges = set()
-    seen_periodic = set()
-    print(vor.ridge_vertices[0])
-    print(vor.ridge_points[0:5])
-    print(vor.vertices[0:5])
-    for (p1, p2), ridge_vertices in zip(vor.ridge_points, vor.ridge_vertices):
-        if -1 in ridge_vertices:
-            continue
-        v0, v1 = vor.vertices[ridge_vertices]
-        ridge_length = math.hypot(v1[0] - v0[0], v1[1] - v0[1])
+    # --- 3. Classify ridges and build output lists ---
+    # A Voronoi ridge is the shared boundary between two seed-point cells.
+    # We keep a ridge only when at least one seed is in the base tile (offset 0,0):
+    #   both seeds in base tile → interior member between two base points
+    #   one seed is a ghost     → periodic member; a ghost point is added to the list
+    #
+    # Ghost points represent where the neighbour lives when you look across the
+    # boundary.  They are added to `points` and linked back to their original
+    # base point via a dependency entry.
 
-        b1, dx1, dy1 = tiled_meta[p1]
-        b2, dx2, dy2 = tiled_meta[p2]
+    points = [[x, y] for x, y in base_points]   # grows as ghost points are appended
+    members = []        # [index_a, index_b, length]
+    dependencies = []   # [master_index, ghost_index]  — ghost stitches to master
+    seen = set()
 
-        is_base_1 = dx1 == 0.0 and dy1 == 0.0
-        is_base_2 = dx2 == 0.0 and dy2 == 0.0
-        if not (is_base_1 or is_base_2):
-            continue
-
-        if is_base_1 and is_base_2:
-            key = (min(b1, b2), max(b1, b2))
-            if key not in seen_edges:
-                edges.append((b1, b2, ridge_length))
-                seen_edges.add(key)
+    for (tiled_p, tiled_q), (ridge_vert_a, ridge_vert_b) in zip(vor.ridge_points, vor.ridge_vertices):
+        if ridge_vert_a == -1 or ridge_vert_b == -1:   # open (infinite) ridge — skip
             continue
 
-        if is_base_1:
-            base_idx = b1
-            other_idx = b2
-            shift = (dx2 - dx1, dy2 - dy1)
+        origin_p, tile_dx_p, tile_dy_p = tiled_meta[tiled_p]
+        origin_q, tile_dx_q, tile_dy_q = tiled_meta[tiled_q]
+
+        is_base_p = tile_dx_p == 0.0 and tile_dy_p == 0.0
+        is_base_q = tile_dx_q == 0.0 and tile_dy_q == 0.0
+
+        if not (is_base_p or is_base_q):
+            continue    # both seeds are ghosts — discard entirely
+
+        ridge_length = math.dist(vor.vertices[ridge_vert_a], vor.vertices[ridge_vert_b])
+
+        if is_base_p and is_base_q:
+            # Interior member: both endpoints are base points
+            key = (min(origin_p, origin_q), max(origin_p, origin_q))
+            if key not in seen:
+                members.append([origin_p, origin_q, ridge_length])
+                seen.add(key)
+
         else:
-            base_idx = b2
-            other_idx = b1
-            shift = (dx1 - dx2, dy1 - dy2)
+            # Periodic member: one seed is a ghost copy from a neighbouring tile.
+            # crossing_shift is the tile offset of the ghost seed — it tells us
+            # which direction the boundary is crossed.
+            if is_base_p:
+                base_origin   = origin_p
+                other_origin  = origin_q
+                crossing_shift = (tile_dx_q, tile_dy_q)
+            else:
+                base_origin   = origin_q
+                other_origin  = origin_p
+                crossing_shift = (tile_dx_p, tile_dy_p)
 
-        key = (base_idx, other_idx, shift[0], shift[1])
-        if key not in seen_periodic:
-            periodic_edges.append((base_idx, other_idx, shift[0], shift[1], ridge_length))
-            seen_periodic.add(key)
+            # The same physical crossing appears twice (once from each side of the
+            # boundary) so check both forward and reverse keys before inserting.
+            forward_key = (base_origin,  other_origin,  crossing_shift)
+            reverse_key = (other_origin, base_origin,  (-crossing_shift[0], -crossing_shift[1]))
 
-    return (innerPoints, edges, periodic_edges, expandedDomainPoints)
+            if forward_key not in seen and reverse_key not in seen:
+                ghost_x = base_points[other_origin][0] + crossing_shift[0]
+                ghost_y = base_points[other_origin][1] + crossing_shift[1]
+                ghost_index = len(points)
+                points.append([ghost_x, ghost_y])
+                members.append([base_origin, ghost_index, ridge_length])
+                dependencies.append([other_origin, ghost_index])
+                seen.add(forward_key)
+
+    return points, members, dependencies
 
 # Call function and plot with matplotlib.
-if __name__ == "__main__":
+if __name__ == "__main__REMOVE":
     import matplotlib.pyplot as plt
     from matplotlib.patches import Circle, Rectangle
 
     width = 10
     height = 5
-    num_points = 1000
-    point_radius = 0.2
+    num_points = 25
+    point_radius = 0.6
     start = perf_counter()
-    points = generateStructure(width, height, num_points, point_radius)
+    points, members, dependencies = generateStructure(width, height, num_points, point_radius)
     elapsed = perf_counter() - start
-    innerPoints, edges, periodic_edges, expandedDomainPoints = points
-    x, y = zip(*innerPoints)
-    print(
-        f"Generated {len(innerPoints)} inner points, {len(edges)} edges, "
-        f"{len(periodic_edges)} periodic edges in {elapsed:.2f} seconds."
+
+    n_base = len(points) - len(dependencies)   # first n_base entries are base points
+
+    print(f"Generated {n_base} base points + {len(dependencies)} ghost points, "
+          f"{len(members)} members, {len(dependencies)} dependencies "
+          f"in {elapsed:.2f} seconds.\n")
+
+    print("Members [index_a, index_b, length]:")
+    for m in members:
+        print(f"  {m}")
+    print("\nDependencies [master, ghost]:")
+    for d in dependencies:
+        print(f"  {d}")
+
+    fig, ax = plt.subplots()
+    ax.add_patch(Rectangle((0, 0), width, height, fill=False, linewidth=2, edgecolor="black"))
+
+    # --- members: blue solid for interior, red dashed for periodic (ghost endpoint) ---
+    for index_a, index_b, length in members:
+        x1, y1 = points[index_a]
+        x2, y2 = points[index_b]
+        is_periodic = index_a >= n_base or index_b >= n_base
+        style = dict(color="red", linestyle="--", linewidth=1) if is_periodic \
+                else dict(color="blue", linestyle="-",  linewidth=1)
+        ax.plot([x1, x2], [y1, y2], zorder=2)
+        mx, my = (x1 + x2) / 2, (y1 + y2) / 2
+        label_color = "darkred" if is_periodic else "blue"
+        ax.text(mx, my, f"{index_a}-{index_b}", fontsize=5, color=label_color,
+                ha="center", va="center", zorder=7,
+                bbox=dict(boxstyle="round,pad=0.1", fc="white", ec="none", alpha=0.6))
+
+    # --- base points: black dot + index label + exclusion-radius circle ---
+    for index, (px, py) in enumerate(points[:n_base]):
+        ax.plot(px, py, "ko", markersize=4, zorder=5)
+        ax.text(px + 0.05, py + 0.05, str(index), fontsize=7, color="black", zorder=6)
+        ax.add_patch(Circle((px, py), point_radius, fill=False, linewidth=0.5,
+                             linestyle=":", edgecolor="gray"))
+
+    # --- ghost points: red cross + index label + dependency annotation ---
+    for master_index, ghost_index in dependencies:
+        gx, gy = points[ghost_index]
+        ax.plot(gx, gy, "rx", markersize=7, markeredgewidth=1.5, zorder=5)
+        ax.text(gx + 0.05, gy + 0.05, str(ghost_index), fontsize=7, color="darkred", zorder=6)
+        # Annotate which base point this ghost stitches to
+        ax.text(gx + 0.05, gy - 0.25, f"→{master_index}", fontsize=5, color="darkred",
+                zorder=6)
+
+    ax.set_xlim(-width * 0.15, width * 1.15)
+    ax.set_ylim(-height * 0.15, height * 1.15)
+    ax.set_aspect("equal", adjustable="box")
+    ax.set_title(f"{n_base} base pts · {len(dependencies)} ghosts · "
+                 f"{len(members)} members · {len(dependencies)} deps")
+    plt.tight_layout()
+    plt.show()
+    
+def generate_voronoi_structure(width: float, height: float, num_points: int, point_radius: float) -> StructureDefinition:
+    default_E = 210e9
+    default_A = 0.01
+    
+    points, members, dependencies = generateStructure(width, height, num_points, point_radius)
+    
+    nodes = [NodeDefinition(dx=x, dy=y) for x, y in points]
+    
+    nodes[0].constraints = "xy"  # Fix the first node to prevent rigid body motion
+    
+    elements = []
+    for index_a, index_b, length in members:
+        elements.append(ElementDefinition(
+            starting_node=index_a,
+            ending_node=index_b,
+            A=length**2,
+        ))
+        
+    dependencies = [DependencyDefinition(
+        node=ghost_index,
+        masters=[MasterDefinition(node=master_index, direction="x", factor=1.0), MasterDefinition(node=master_index, direction="y", factor=1.0)]
+    ) for master_index, ghost_index in dependencies]
+    
+    
+        
+    return StructureDefinition(
+        nodes=nodes,
+        elements=elements,
+        dependencies=dependencies,
+        eigenstrain=EigenstrainDefinition(x=1.0, y=0.0, angle=1.0),
     )
 
+from parameter_solver import solveParameters_iso, solveParameters_orto
 
-    ax = plt.gca()
-    ax.add_patch(Rectangle((0, 0), width, height, fill=False, linewidth=1))
-    plt.scatter(x, y)
-    for p1, p2, ridge_length in edges:
-        x1, y1 = innerPoints[p1]
-        x2, y2 = innerPoints[p2]
-        ax.plot([x1, x2], [y1, y2], linewidth=max(0.5, ridge_length * 0.2))
-    for p1, p2, dx, dy, ridge_length in periodic_edges:
-        x1, y1 = innerPoints[p1]
-        x2, y2 = innerPoints[p2]
-        ax.plot(
-            [x1, x2 + dx],
-            [y1, y2 + dy],
-            linewidth=max(0.5, ridge_length),
-            linestyle="--",
-        )
-    for px, py in expandedDomainPoints:
-        ax.add_patch(Circle((px, py), point_radius, fill=False, linewidth=1))
-    plt.xlim(-width, 2 * width)
-    plt.ylim(-height, 2 * height)
-    ax.set_aspect("equal", adjustable="box")
-    plt.title("Random Points with Minimum Distance")
-    plt.show()
+truss = generate_voronoi_structure(10, 5, 1000, 1)
+
+solveParameters_iso(truss)

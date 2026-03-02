@@ -15,6 +15,8 @@ max_angle = math.degrees(math.atan(height / width))
 
 x = np.linspace(0.001, max_angle, 50, endpoint=False)
 
+print(f"Testing angles from 0 to {max_angle:.2f} degrees")
+
 results = []
 total = len(x)
 start_time = time.perf_counter()

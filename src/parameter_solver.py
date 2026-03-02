@@ -124,10 +124,5 @@ def solveParameters_orto(structure: StructureDefinition):
         )
     )
 
-    podil = Ds[1, 0] / Ds[1, 1]
-    podil2 = Ds[0, 1] / Ds[0, 0]
-    print(podil2)
-    print(podil)
-
 
     return f_Ex, f_Ey, f_vxy, f_vyx, f_Gxy
