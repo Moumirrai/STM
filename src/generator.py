@@ -163,11 +163,10 @@ def create_tie_structure_angle(height: float, width: float, angle: float) -> Str
     ]
     
     elements = [
-        ElementDefinition(starting_node=0, ending_node=1),
+        #ElementDefinition(starting_node=0, ending_node=1),
         ElementDefinition(starting_node=2, ending_node=3),
         ElementDefinition(starting_node=0, ending_node=4),
         ElementDefinition(starting_node=2, ending_node=4),
-        ElementDefinition(starting_node=4, ending_node=5),
         ElementDefinition(starting_node=1, ending_node=5),
         ElementDefinition(starting_node=3, ending_node=5),
         ElementDefinition(starting_node=5, ending_node=6)
@@ -182,10 +181,10 @@ def create_tie_structure_angle(height: float, width: float, angle: float) -> Str
             ]
         ),
         DependencyDefinition(
-            node=1,
+            node=3,
             masters=[
-                MasterDefinition(node=3, direction="x", factor=1.0),
-                MasterDefinition(node=3, direction="y", factor=1.0)
+                MasterDefinition(node=1, direction="x", factor=1.0),
+                MasterDefinition(node=1, direction="y", factor=1.0)
             ]
         ),
         DependencyDefinition(
@@ -194,7 +193,7 @@ def create_tie_structure_angle(height: float, width: float, angle: float) -> Str
                 MasterDefinition(node=4, direction="x", factor=1.0),
                 MasterDefinition(node=4, direction="y", factor=1.0)
             ]
-        )
+        ),
     ]
     
     return StructureDefinition(

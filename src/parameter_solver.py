@@ -53,7 +53,7 @@ def solveParameters_iso(structure: StructureDefinition):
     result = least_squares(residuals, initial_guess, bounds=bounds)
     fitted_E, fitted_v = result.x
 
-    print(colored(f"D matrix from DOF elimination solver:\n{Ds}\n", "cyan"))
+    """ print(colored(f"D matrix from DOF elimination solver:\n{Ds}\n", "cyan"))
 
     D_fitted = compute_D([fitted_E, fitted_v])
     print(colored(f"Fitted D matrix:\n{D_fitted}\n", "light_green"))
@@ -66,7 +66,7 @@ def solveParameters_iso(structure: StructureDefinition):
     print("")
     # print("Optimization success:", result.success)
     print(colored(f"Final cost: {result.cost}", "light_red"))
-
+ """
     return fitted_E, fitted_v
 
 
@@ -82,7 +82,7 @@ def solveParameters_orto(structure: StructureDefinition):
 
     Ds = np.array(results).T
 
-    print(colored(f"D matrix from DOF elimination solver:\n{Ds}\n", "cyan"))
+    """ print(colored(f"D matrix from DOF elimination solver:\n{Ds}\n", "cyan")) """
 
     def compute_D(params):
         Ex, Ey, vxy, vyx, Gxy = params
@@ -113,7 +113,7 @@ def solveParameters_orto(structure: StructureDefinition):
 
     D_fitted = compute_D([f_Ex, f_Ey, f_vxy, f_vyx, f_Gxy])
 
-    print(colored(f"Fitted D matrix:\n{D_fitted}\n", "light_green"))
+    #print(colored(f"Fitted D matrix:\n{D_fitted}\n", "light_green"))
 
     print(f" Fitted parameters: ", end="")
     print(

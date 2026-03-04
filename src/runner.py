@@ -13,7 +13,7 @@ height = 0.1
 width = height * 1
 max_angle = math.degrees(math.atan(height / width))
 
-x = np.linspace(0.001, max_angle, 50, endpoint=False)
+x = np.linspace(0.001, max_angle, 1000, endpoint=True)
 
 print(f"Testing angles from 0 to {max_angle:.2f} degrees")
 

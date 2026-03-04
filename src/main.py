@@ -13,7 +13,7 @@ np.set_printoptions(
     linewidth=250,
 )
 
-trussData = create_tie_structure_angle(0.1, 0.1, 45)
+trussData = create_tie_structure_angle(0.1, 0.1, 30)
 #trussData = generate_voronoi_structure(10, 5, 1000, 0.2)
 
 truss: TrussData = parse_structure_data(
