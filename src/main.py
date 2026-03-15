@@ -13,8 +13,8 @@ np.set_printoptions(
     linewidth=250,
 )
 
-trussData = create_tie_structure_angle(0.1, 0.1, 30)
-#trussData = generate_voronoi_structure(10, 5, 1000, 0.2)
+#trussData = create_tie_structure_angle(0.1, 0.1, 30)
+trussData = generate_voronoi_structure(10, 5, 1000, 0.2)
 
 truss: TrussData = parse_structure_data(
     trussData, explicitEigenStrain=np.array([1.0, 0.0, 0.0])
@@ -34,7 +34,7 @@ eigenstrainSets = [
 
 results = []
 
-plot_deformed_structure(truss)
+plot_deformed_structure(truss,tiled=True)
 
 
 for eigenstrain in eigenstrainSets:

@@ -10,10 +10,10 @@ from parameter_solver import solveParameters_iso, solveParameters_orto
 import matplotlib.pyplot as plt
 
 height = 0.1
-width = height * 1
+width = height * 2
 max_angle = math.degrees(math.atan(height / width))
 
-x = np.linspace(0.001, max_angle, 1000, endpoint=True)
+x = np.linspace(0.001, max_angle, 100, endpoint=True)
 
 print(f"Testing angles from 0 to {max_angle:.2f} degrees")
 

@@ -25,10 +25,10 @@ structure = create_tie_structure_angle(height, width, angle)
 solveParameters_orto(create_tie_structure_angle(height, width, angle))
 
 truss: TrussData = parse_structure_data(
-    structure, explicitEigenStrain=np.array([1, 0, 0]),
+    structure, explicitEigenStrain=np.array([1.0, 0, 0]),
 )
 solver = TrussSolver(truss)
 res = solver.solve()
-plot_deformed_structure(truss)
+plot_deformed_structure(truss, tiled=True, original=True)
 
 
