@@ -211,9 +211,3 @@ def generate_voronoi_structure(width: float, height: float, num_points: int, poi
         dependencies=dependencies,
         eigenstrain=EigenstrainDefinition(x=1.0, y=0.0, angle=1.0),
     )
-
-from parameter_solver import solveParameters_iso, solveParameters_orto
-
-truss = generate_voronoi_structure(10, 5, 1000, 1)
-
-solveParameters_iso(truss)

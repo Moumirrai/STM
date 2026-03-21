@@ -146,7 +146,12 @@ def calculate_intersection(height: float, width: float, angle: float):
 
     return x_middle, y_intersection
     
-def create_tie_structure_angle(height: float, width: float, angle: float) -> StructureDefinition:
+def create_tie_structure_angle(
+    height: float,
+    width: float,
+    angle: float,
+    default_A: float = 0.00001,
+) -> StructureDefinition:
     
     x, y = calculate_intersection(height, width, angle)
     
@@ -167,9 +172,12 @@ def create_tie_structure_angle(height: float, width: float, angle: float) -> Str
         ElementDefinition(starting_node=2, ending_node=3),
         ElementDefinition(starting_node=0, ending_node=4),
         ElementDefinition(starting_node=2, ending_node=4),
+        # 4-5 and 5-6 represent the same periodic ligament across a tile seam.
+        # Split area so the pair contributes one effective member stiffness.
+        ElementDefinition(starting_node=4, ending_node=5, A=default_A * 0.5),
         ElementDefinition(starting_node=1, ending_node=5),
         ElementDefinition(starting_node=3, ending_node=5),
-        ElementDefinition(starting_node=5, ending_node=6)
+        ElementDefinition(starting_node=5, ending_node=6, A=default_A * 0.5)
     ]
     
     dependencies = [
@@ -201,5 +209,6 @@ def create_tie_structure_angle(height: float, width: float, angle: float) -> Str
         elements=elements,
         dependencies=dependencies,
         eigenstrain=EigenstrainDefinition(x=1.0, y=0.0, angle=1.0),
+        defaultCrossSectionArea=default_A,
     )
     

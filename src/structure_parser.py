@@ -231,3 +231,110 @@ def parse_json_file(file_path: str, explicitEigenStrain: Optional[np.ndarray] = 
         data = json.load(f)
     definition = StructureDefinition.from_json_dict(data)
     return parse_structure_data(definition, explicitEigenStrain)
+
+
+def truss_data_to_json_string(truss: TrussData, indent: Optional[int] = 2) -> str:
+    """Serialize TrussData into a JSON string compatible with StructureDefinition-style input."""
+
+    def _is_close(a: float, b: float) -> bool:
+        return math.isclose(a, b, rel_tol=1e-12, abs_tol=1e-15)
+
+    def _format_constraints(node: Node) -> str:
+        constraints = ""
+        if node.constrained_x:
+            constraints += "x"
+        if node.constrained_y:
+            constraints += "y"
+        return constraints
+
+    # Infer defaults from elements when possible so JSON stays concise.
+    default_E: Optional[float] = None
+    default_A: Optional[float] = None
+    if truss.elements:
+        first_E = truss.elements[0].E
+        first_A = truss.elements[0].A
+        if all(_is_close(elem.E, first_E) for elem in truss.elements):
+            default_E = first_E
+        if all(_is_close(elem.A, first_A) for elem in truss.elements):
+            default_A = first_A
+
+    nodes_data: List[Dict[str, Any]] = []
+    for node in truss.nodes:
+        node_data: Dict[str, Any] = {
+            "dx": str(node.dx),
+            "dy": str(node.dy),
+        }
+
+        constraints = _format_constraints(node)
+        if constraints:
+            node_data["constraints"] = constraints
+
+        deformations: Dict[str, float] = {}
+        if node.deformation_x != 0.0:
+            deformations["x"] = node.deformation_x
+        if node.deformation_y != 0.0:
+            deformations["y"] = node.deformation_y
+        if deformations:
+            node_data["deformations"] = deformations
+
+        loads: Dict[str, float] = {}
+        if node.load_x != 0.0:
+            loads["x"] = node.load_x
+        if node.load_y != 0.0:
+            loads["y"] = node.load_y
+        if loads:
+            node_data["loads"] = loads
+
+        nodes_data.append(node_data)
+
+    elements_data: List[Dict[str, Any]] = []
+    for element in truss.elements:
+        element_data: Dict[str, Any] = {
+            "starting_node": element.nodes[0].index,
+            "ending_node": element.nodes[1].index,
+        }
+
+        if default_E is None or not _is_close(element.E, default_E):
+            element_data["E"] = element.E
+        if default_A is None or not _is_close(element.A, default_A):
+            element_data["A"] = element.A
+
+        elements_data.append(element_data)
+
+    dependencies_data: List[Dict[str, Any]] = []
+    for node in truss.nodes:
+        if node.dependency is None:
+            continue
+
+        masters_data = []
+        for master in node.dependency.masters:
+            masters_data.append(
+                {
+                    "node": master.nodeIndex,
+                    "direction": "x" if master.direction == 0 else "y",
+                    "factor": master.factor,
+                    "eigenstrain": master.eigenstrain,
+                }
+            )
+
+        if masters_data:
+            dependencies_data.append(
+                {
+                    "node": node.index,
+                    "masters": masters_data,
+                }
+            )
+
+    output: Dict[str, Any] = {
+        "nodes": nodes_data,
+        "elements": elements_data,
+        "dependencies": dependencies_data,
+        "volume": truss.volume,
+    }
+
+    if default_E is not None:
+        output["defaultYoungsModulus"] = default_E
+    if default_A is not None:
+        output["defaultCrossSectionArea"] = default_A
+
+    return json.dumps(output, indent=indent)

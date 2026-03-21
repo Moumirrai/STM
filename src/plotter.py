@@ -162,7 +162,7 @@ def export_vtk_to_file(truss: TrussData, filename: str):
     # construct PolyData with points and lines to avoid assignment-type mismatch
 
 
-def plot_deformed_structure(truss: TrussData, scale: float = 0.5, tiled: bool = False, tile_opacity: float = 0.25, original: bool = False):
+def plot_deformed_structure(truss: TrussData, scale: float = 1, tiled: bool = False, tile_opacity: float = 0.25, original: bool = False):
     # Compute deformed positions
     deformed_positions: dict[int, tuple[float, float]] = {}
     for node in truss.nodes:
@@ -176,7 +176,7 @@ def plot_deformed_structure(truss: TrussData, scale: float = 0.5, tiled: bool = 
     # Get axial forces for coloring
     forces = [element.axial_force() for element in truss.elements]
     
-    print(colored(f"Axial forces for coloring: {forces}", "yellow"))
+    #print(colored(f"Axial forces for coloring: {forces}", "yellow"))
 
     if not forces:
         print(colored("No elements found. Nothing to plot.", "red"))

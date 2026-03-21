@@ -20,12 +20,12 @@ eigenstrainSets = [
 ]
 
 
-def solveParameters_iso(structure: StructureDefinition):
+def solveParameters_iso(structure: StructureDefinition | str):
     results = []
     for eigenstrain in eigenstrainSets:
         truss: TrussData = parse_structure_data(
             structure, explicitEigenStrain=eigenstrain
-        )
+        ) if isinstance(structure, StructureDefinition) else parse_json_file(structure, explicitEigenStrain=eigenstrain)
         solver = TrussSolver(truss)
         res = solver.solve()
         results.append(res)
@@ -67,6 +67,14 @@ def solveParameters_iso(structure: StructureDefinition):
     # print("Optimization success:", result.success)
     print(colored(f"Final cost: {result.cost}", "light_red"))
  """
+    print(f" Fitted parameters: ", end="")
+    print(
+        colored(
+            f" E = {fitted_E:.2e} Pa \t v = {fitted_v:.3f} ",
+            "black",
+            "on_light_green",
+        )
+    )
     return fitted_E, fitted_v
 
 
@@ -106,7 +114,7 @@ def solveParameters_orto(structure: StructureDefinition):
 
     # initial guesses and bounds
     initial_guess = [210e6, 210e6, 0.4, 0.4, 21e6]  # E in Pa, v dimensionless
-    bounds = ([1e2, 1e2, -1, -1, 0], [1e12, 1e12, 0.5, 0.5, 1e12])
+    bounds = ([1e2, 1e2, -10, -10, 0], [1e12, 1e12, 1, 1, 1e12])
 
     result = least_squares(residuals, initial_guess, bounds=bounds)
     f_Ex, f_Ey, f_vxy, f_vyx, f_Gxy = result.x

@@ -18,7 +18,7 @@ height = 0.1
 width = height * 1
 max_angle = math.degrees(math.atan(height / width))
 
-angle = 20
+angle = 44
 
 structure = create_tie_structure_angle(height, width, angle)
 

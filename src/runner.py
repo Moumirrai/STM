@@ -10,7 +10,7 @@ from parameter_solver import solveParameters_iso, solveParameters_orto
 import matplotlib.pyplot as plt
 
 height = 0.1
-width = height * 2
+width = height * 1
 max_angle = math.degrees(math.atan(height / width))
 
 x = np.linspace(0.001, max_angle, 100, endpoint=True)

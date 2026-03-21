@@ -1,0 +1,15 @@
+{
+  "$schema": "./input.schema.json",
+  "nodes": [
+    { "dx": "0", "dy": "3" },
+    { "dx": "4", "dy": "0", "constraints": "y" },
+    { "dx": "0", "dy": "0", "constraints": "xy"}
+  ],
+  "elements": [
+    { "starting_node": 0, "ending_node": 1 },
+    { "starting_node": 1, "ending_node": 2 },
+    { "starting_node": 2, "ending_node": 0 }
+  ],
+  "defaultCrossSectionArea": 0.0001,
+  "defaultYoungsModulus": 210e6
+}
