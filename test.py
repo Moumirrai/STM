@@ -18,3 +18,14 @@ K_CA = np.array([[1,2,3,4],
 K = L.T @ K_CA @ L
 
 print(K)
+
+u = np.array([1,2,3])
+
+X = np.array([[1,0,0],
+              [0,1,0],
+              [1,1,0],
+              [0,0,1]])
+
+u_full = u @ X.T
+
+print(u_full)
