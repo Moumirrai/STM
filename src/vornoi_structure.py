@@ -182,8 +182,6 @@ if __name__ == "__main__REMOVE":
     
 def generate_voronoi_structure(width: float, height: float, num_points: int, point_radius: float) -> StructureDefinition:
     default_E = 210e9
-    default_A = 0.01
-    
     points, members, dependencies = generateStructure(width, height, num_points, point_radius)
     
     nodes = [NodeDefinition(dx=x, dy=y) for x, y in points]
@@ -192,10 +190,11 @@ def generate_voronoi_structure(width: float, height: float, num_points: int, poi
     
     elements = []
     for index_a, index_b, length in members:
+        # Cross-section proportional to Voronoi ridge length; E is set globally via defaultYoungsModulus
         elements.append(ElementDefinition(
             starting_node=index_a,
             ending_node=index_b,
-            A=length**2,
+            A=length,
         ))
         
     dependencies = [DependencyDefinition(
@@ -210,4 +209,6 @@ def generate_voronoi_structure(width: float, height: float, num_points: int, poi
         elements=elements,
         dependencies=dependencies,
         eigenstrain=EigenstrainDefinition(x=1.0, y=0.0, angle=1.0),
+        defaultYoungsModulus=default_E,
+        volume=width * height,
     )

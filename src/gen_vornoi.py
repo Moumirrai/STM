@@ -13,7 +13,7 @@ np.set_printoptions(
     linewidth=250,
 )
 
-trussData = generate_voronoi_structure(10, 5, 1000, 0.2)
+trussData = generate_voronoi_structure(10, 10, 1000, 0.0001)
 
 truss: TrussData = parse_structure_data(
     trussData, explicitEigenStrain=np.array([0.0, 0.0, 0.0])

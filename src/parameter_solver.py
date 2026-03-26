@@ -52,6 +52,9 @@ def solveParameters_iso(structure: StructureDefinition | str):
 
     result = least_squares(residuals, initial_guess, bounds=bounds)
     fitted_E, fitted_v = result.x
+    
+    D_fitted = compute_D([fitted_E, fitted_v])
+    print(colored(f"Fitted D matrix:\n{D_fitted}\n", "light_green"))
 
     """ print(colored(f"D matrix from DOF elimination solver:\n{Ds}\n", "cyan"))
 
