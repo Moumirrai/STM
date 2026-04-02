@@ -98,6 +98,7 @@ class LagrangeTrussSolver:
             row += 1
         # Dependent constraints (keep existing loop, but update row)
         for constraint in dependentConstraints:
+            print(f"Processing dependent constraint for DOF {constraint.dof} with eigenstrain {constraint.eigenstrain} and coeffs {constraint.coeffs}")
             C[row, constraint.dof] = 1
             for master_dof, factor in constraint.coeffs.items():
                 C[row, master_dof] = -factor  # Fix: negative for masters
@@ -113,6 +114,10 @@ class LagrangeTrussSolver:
         K_aug[:total_dof_count, total_dof_count:] = C.T  # Remove * -1
         K_aug[total_dof_count:, :total_dof_count] = C
         K_aug = K_aug.tocsr()
+        
+        print(K_aug.toarray())
+        
+        print(f_aug)
 
         u_aug = spsolve(K_aug, f_aug)
 

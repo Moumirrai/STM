@@ -7,24 +7,27 @@ from vornoi_structure import generate_voronoi_structure
 from models import TrussData
 from plotter import export_vtk, export_vtk_to_file, plot_deformed_structure
 from solver import TrussSolver
+from solver_lagrange import LagrangeTrussSolver
 from structure_parser import parse_json_file, parse_structure_data
 
 np.set_printoptions(
     linewidth=250,
 )
 
-#trussData = create_tie_structure_angle(0.1, 0.1, 30)
+""" #trussData = create_tie_structure_angle(0.1, 0.1, 30)
 trussData = generate_voronoi_structure(10, 5, 1000, 0.2)
 
 truss: TrussData = parse_structure_data(
     trussData, explicitEigenStrain=np.array([1.0, 0.0, 0.0])
-)
+) """
 
-#truss: TrussData = parse_json_file("./data/grid.json")
+truss: TrussData = parse_json_file("./data/simple_truss1.json")
 
-solver = TrussSolver(truss)
+solver = LagrangeTrussSolver(truss)
 
 res = solver.solve()
+
+exit(0)
 
 eigenstrainSets = [
     np.array([1, 0, 0]),

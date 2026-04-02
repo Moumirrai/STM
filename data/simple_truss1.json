@@ -22,7 +22,7 @@
     { "starting_node": 3, "ending_node": 1 }
   ],
   "eigenstrain": {
-    "x": 0.00001,
+    "x": 0.00002,
     "y": 0.00000,
     "angle": 0.00000
   }

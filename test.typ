@@ -1,27 +1,64 @@
-#import "@preview/lilaq:0.5.0" as lq
+#import "@preview/lilaq:0.6.0" as lq
 
-#let (x, E_mean, E_var, v_mean, v_var) = lq.load-txt(read("vornoi_fidelity.csv"))
+#let data = lq.load-txt(read("vornoi_fidelity.csv"))
+#let (x_raw, E_mean, E_std, v_mean, v_std) = data
 
-//#let x = lq.linspace(0.001, 0.999, num: 100)
+// Data jsou od hrubé (x=1) po jemnou (x=0.1) síť
+// Použijeme kroky 1–20 jako osu X, takže jemnost roste doprava
+#let steps = range(1, 21).map(i => float(i))
+
+#let E_upper = E_mean.zip(E_std).map(((m, s)) => m + s)
+#let E_lower = E_mean.zip(E_std).map(((m, s)) => m - s)
+#let v_upper = v_mean.zip(v_std).map(((m, s)) => m + s)
+#let v_lower = v_mean.zip(v_std).map(((m, s)) => m - s)
+
+// Obrátíme pořadí dat (index 0 = nejhrubší, index 19 = nejjemnější)
+#let rev(arr) = arr.rev()
 
 #figure(
-  caption: "1x1 Bowtie Modul pružnosti",
-)[
-  #lq.diagram(
-    legend: (position: (100% + .5em, 0%)),
-    lq.plot(x, E_mean, mark: none, smooth: false, label: $E_"mean"$),
-    lq.plot(x, E_mean.map(x => x * -1), mark: none, smooth: false, label: $E_"mean"$),
-    xlabel: [Úhel $alpha$ (°)], ylabel: "Modul pružnosti (GPa)"
-  )
-]
+  grid(
+    columns: 1,
+    rows: 2,
+    gutter: 1em,
 
-#figure(
-  caption: "1x1 Bowtie Modul pružnosti",
-)[
-  #lq.diagram(
-    legend: (position: (100% + .5em, 0%)),
-    lq.plot(x, E_var, mark: none, smooth: false, label: $E_"var"$),
-    lq.plot(x, E_var.map(x => x * -1), mark: none, smooth: false, label: $E_"var"$),
-    xlabel: [Úhel $alpha$ (°)], ylabel: "Modul pružnosti (GPa)"
+    lq.diagram(
+      xlabel: [Krok zjemnění (hrubá → jemná)],
+      ylabel: [$E$ [Pa]],
+      lq.fill-between(
+        rev(steps),
+        rev(E_lower),
+        y2: rev(E_upper),
+        fill: blue.lighten(60%),
+        label: [$E$ pásmo $p m sigma$],
+      ),
+      lq.plot(
+        rev(steps),
+        rev(E_mean),
+        mark: "o",
+        mark-size: 3pt,
+        color: blue,
+        label: [$E$ střední hodnota],
+      ),
+    ),
+
+    lq.diagram(
+      xlabel: [Krok zjemnění (hrubá → jemná)],
+      ylabel: [$nu$],
+      lq.fill-between(
+        rev(steps),
+        rev(v_lower),
+        y2: rev(v_upper),
+        fill: red.lighten(60%),
+        label: [$nu$ pásmo $p m sigma$],
+      ),
+      lq.plot(
+        rev(steps),
+        rev(v_mean),
+        mark: "o",
+        mark-size: 3pt,
+        color: red,
+        label: [$nu$ střední hodnota],
+      ),
+    ),
   )
-]
+)
