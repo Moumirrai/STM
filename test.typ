@@ -13,25 +13,6 @@
 #let v_upper = v_mean.zip(v_std).map(((m, s)) => m + s)
 #let v_lower = v_mean.zip(v_std).map(((m, s)) => m - s)
 
-= Popis grafu
-Předložené grafy zachycují vliv poloměru kontrolního obvodu používaného při
-umisťování bodů, z nichž je následně generována Voronoiho teselační struktura.
-Na takto vytvořené struktuře jsou určovány efektivní materiálové parametry,
-konkrétně Youngův modul $E$ (horní graf) a Poissonovo číslo $nu$ (dolní graf).
-
-Parametr poloměru kontrolního obvodu je měněn od hodnoty $0.6$
-(hrubší struktura) po hodnotu $0.05$ (jemnější struktura).
-Pro každou hodnotu je provedeno $300$ nezávislých iterací,
-ze kterých je vyhodnocena střední hodnota a směrodatná odchylka.
-
-Plná křivka v grafech reprezentuje střední hodnotu sledované veličiny,
-zatímco barevné pásmo odpovídá intervalu střední hodnota ± směrodatná odchylka.
-Výsledky ukazují, že střední hodnoty parametrů se v rámci zkoumaného rozsahu
-mění pouze omezeně, zatímco se zjemňováním struktury se mění velikost rozptylu
-výsledků.
-
-Dolní ilustrace slouží k názornému porovnání hrubé a jemné varianty struktury.
-
 #figure(
   grid(
     columns: 1,
