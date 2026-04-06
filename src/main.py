@@ -21,11 +21,15 @@ truss: TrussData = parse_structure_data(
     trussData, explicitEigenStrain=np.array([1.0, 0.0, 0.0])
 ) """
 
-truss: TrussData = parse_json_file("./data/simple_truss1.json")
+truss: TrussData = parse_json_file("./data/grid.json", explicitEigenStrain=np.array([0.0, 0.0, 1.0]))
 
-solver = LagrangeTrussSolver(truss)
+solver = TrussSolver(truss)
 
 res = solver.solve()
+
+export_vtk(truss)
+
+plot_deformed_structure(truss,tiled=False,original=True)
 
 exit(0)
 

@@ -30,9 +30,6 @@ class TrussSolver:
                                ^  ^  ^  ^  ^  ^
                                Free  Dependent  Fixed
         """
-        for elem_id, element in enumerate(self.truss.elements):
-            print(f"Element {elem_id} connects nodes {element.nodes[0]} and {element.nodes[1]}")
-            print(element.stiffness())
         
         for node in self.truss.nodes:
 

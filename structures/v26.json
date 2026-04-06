@@ -1,0 +1,826 @@
+{
+  "nodes": [
+    {
+      "dx": "1.3222120399374653",
+      "dy": "4.720811441959972",
+      "constraints": "xy"
+    },
+    {
+      "dx": "0.05336446187639343",
+      "dy": "1.5090639528911443"
+    },
+    {
+      "dx": "2.4671831151433365",
+      "dy": "3.509105162579349"
+    },
+    {
+      "dx": "4.178032793039558",
+      "dy": "3.1389687479515986"
+    },
+    {
+      "dx": "2.631799169161497",
+      "dy": "0.4942607721722436"
+    },
+    {
+      "dx": "1.4355664957630843",
+      "dy": "1.9365464882860361"
+    },
+    {
+      "dx": "3.2267290792549708",
+      "dy": "4.066804256536093"
+    },
+    {
+      "dx": "1.4215911698076134",
+      "dy": "3.378789198750241"
+    },
+    {
+      "dx": "4.907731970729179",
+      "dy": "0.3985923191231072"
+    },
+    {
+      "dx": "0.3540407827936026",
+      "dy": "4.0542814518070935"
+    },
+    {
+      "dx": "2.350396048290686",
+      "dy": "2.3903470982625725"
+    },
+    {
+      "dx": "2.292217296047588",
+      "dy": "1.2384132870191018"
+    },
+    {
+      "dx": "3.4855666737807445",
+      "dy": "0.8362847415578323"
+    },
+    {
+      "dx": "3.3290256959817977",
+      "dy": "2.482968201686113"
+    },
+    {
+      "dx": "1.014710672466046",
+      "dy": "0.897687361334713"
+    },
+    {
+      "dx": "4.092276673150791",
+      "dy": "2.126859327508811"
+    },
+    {
+      "dx": "2.2453372464027357",
+      "dy": "4.519652289075936"
+    },
+    {
+      "dx": "4.41122882042123",
+      "dy": "4.276520751340211"
+    },
+    {
+      "dx": "3.231710809882477",
+      "dy": "4.9084228025157035"
+    },
+    {
+      "dx": "3.1151610094425033",
+      "dy": "1.6093682640132974"
+    },
+    {
+      "dx": "0.5653702103065006",
+      "dy": "2.7490331988655345"
+    },
+    {
+      "dx": "4.143996028549145",
+      "dy": "0.07895236733603372"
+    },
+    {
+      "dx": "4.349999076728995",
+      "dy": "1.109585035741797"
+    },
+    {
+      "dx": "5.354040782793603",
+      "dy": "-0.9457185481929065"
+    },
+    {
+      "dx": "3.231710809882477",
+      "dy": "-0.09157719748429649"
+    },
+    {
+      "dx": "4.41122882042123",
+      "dy": "-0.723479248659789"
+    },
+    {
+      "dx": "3.231710809882477",
+      "dy": "-0.09157719748429649"
+    },
+    {
+      "dx": "4.41122882042123",
+      "dy": "-0.723479248659789"
+    },
+    {
+      "dx": "6.322212039937465",
+      "dy": "-0.27918855804002796"
+    },
+    {
+      "dx": "6.014710672466046",
+      "dy": "0.897687361334713"
+    },
+    {
+      "dx": "5.053364461876393",
+      "dy": "1.5090639528911443"
+    },
+    {
+      "dx": "-0.58877117957877",
+      "dy": "4.276520751340211"
+    },
+    {
+      "dx": "1.3222120399374653",
+      "dy": "-0.27918855804002796"
+    },
+    {
+      "dx": "2.631799169161497",
+      "dy": "5.494260772172243"
+    },
+    {
+      "dx": "2.631799169161497",
+      "dy": "5.494260772172243"
+    },
+    {
+      "dx": "2.631799169161497",
+      "dy": "5.494260772172243"
+    },
+    {
+      "dx": "5.053364461876393",
+      "dy": "1.5090639528911443"
+    },
+    {
+      "dx": "5.565370210306501",
+      "dy": "2.7490331988655345"
+    },
+    {
+      "dx": "5.354040782793603",
+      "dy": "4.0542814518070935"
+    },
+    {
+      "dx": "5.565370210306501",
+      "dy": "2.7490331988655345"
+    },
+    {
+      "dx": "5.053364461876393",
+      "dy": "1.5090639528911443"
+    }
+  ],
+  "elements": [
+    {
+      "starting_node": 8,
+      "ending_node": 23,
+      "A": 0.5390755014287221
+    },
+    {
+      "starting_node": 21,
+      "ending_node": 12,
+      "A": 0.519926959511562
+    },
+    {
+      "starting_node": 21,
+      "ending_node": 22,
+      "A": 0.37281742919802446
+    },
+    {
+      "starting_node": 21,
+      "ending_node": 8,
+      "A": 0.8097457834991397
+    },
+    {
+      "starting_node": 21,
+      "ending_node": 24,
+      "A": 0.8001044049540689
+    },
+    {
+      "starting_node": 21,
+      "ending_node": 25,
+      "A": 0.9734328185806638
+    },
+    {
+      "starting_node": 12,
+      "ending_node": 22,
+      "A": 0.8473070770904858
+    },
+    {
+      "starting_node": 12,
+      "ending_node": 19,
+      "A": 0.9511065496354829
+    },
+    {
+      "starting_node": 12,
+      "ending_node": 4,
+      "A": 0.6543573134164927
+    },
+    {
+      "starting_node": 12,
+      "ending_node": 26,
+      "A": 0.4949971312512003
+    },
+    {
+      "starting_node": 8,
+      "ending_node": 27,
+      "A": 0.3318358822846056
+    },
+    {
+      "starting_node": 8,
+      "ending_node": 28,
+      "A": 0.3605380593737936
+    },
+    {
+      "starting_node": 8,
+      "ending_node": 29,
+      "A": 0.796808138920927
+    },
+    {
+      "starting_node": 8,
+      "ending_node": 22,
+      "A": 0.6462051422047373
+    },
+    {
+      "starting_node": 8,
+      "ending_node": 30,
+      "A": 0.45138282972099875
+    },
+    {
+      "starting_node": 9,
+      "ending_node": 31,
+      "A": 1.100143539903288
+    },
+    {
+      "starting_node": 10,
+      "ending_node": 2,
+      "A": 0.7986097112856247
+    },
+    {
+      "starting_node": 10,
+      "ending_node": 13,
+      "A": 0.7801467940685847
+    },
+    {
+      "starting_node": 10,
+      "ending_node": 19,
+      "A": 0.47026582593688243
+    },
+    {
+      "starting_node": 10,
+      "ending_node": 7,
+      "A": 0.4856258379897939
+    },
+    {
+      "starting_node": 10,
+      "ending_node": 5,
+      "A": 0.9289435867086032
+    },
+    {
+      "starting_node": 10,
+      "ending_node": 11,
+      "A": 0.4735016796881485
+    },
+    {
+      "starting_node": 2,
+      "ending_node": 13,
+      "A": 0.5630647430115682
+    },
+    {
+      "starting_node": 2,
+      "ending_node": 6,
+      "A": 0.9976693980432277
+    },
+    {
+      "starting_node": 2,
+      "ending_node": 16,
+      "A": 0.7673595078177884
+    },
+    {
+      "starting_node": 2,
+      "ending_node": 7,
+      "A": 0.9259559370811314
+    },
+    {
+      "starting_node": 11,
+      "ending_node": 5,
+      "A": 0.7259427415807777
+    },
+    {
+      "starting_node": 11,
+      "ending_node": 14,
+      "A": 0.7302342215955623
+    },
+    {
+      "starting_node": 11,
+      "ending_node": 4,
+      "A": 1.1890590080382306
+    },
+    {
+      "starting_node": 11,
+      "ending_node": 19,
+      "A": 0.8235354916664903
+    },
+    {
+      "starting_node": 14,
+      "ending_node": 5,
+      "A": 0.8817909237713748
+    },
+    {
+      "starting_node": 14,
+      "ending_node": 1,
+      "A": 0.8176076869770139
+    },
+    {
+      "starting_node": 14,
+      "ending_node": 4,
+      "A": 0.09687105751492049
+    },
+    {
+      "starting_node": 14,
+      "ending_node": 32,
+      "A": 1.1299631958974685
+    },
+    {
+      "starting_node": 0,
+      "ending_node": 9,
+      "A": 1.002739155039813
+    },
+    {
+      "starting_node": 0,
+      "ending_node": 16,
+      "A": 1.1705885170971206
+    },
+    {
+      "starting_node": 0,
+      "ending_node": 33,
+      "A": 0.2904727850167544
+    },
+    {
+      "starting_node": 0,
+      "ending_node": 7,
+      "A": 0.5805147238494103
+    },
+    {
+      "starting_node": 18,
+      "ending_node": 34,
+      "A": 0.7103540123692442
+    },
+    {
+      "starting_node": 18,
+      "ending_node": 16,
+      "A": 0.46246007010786255
+    },
+    {
+      "starting_node": 18,
+      "ending_node": 6,
+      "A": 0.9367877559303
+    },
+    {
+      "starting_node": 18,
+      "ending_node": 17,
+      "A": 0.03052315722451237
+    },
+    {
+      "starting_node": 16,
+      "ending_node": 6,
+      "A": 0.4562563194783126
+    },
+    {
+      "starting_node": 16,
+      "ending_node": 35,
+      "A": 0.800171344060459
+    },
+    {
+      "starting_node": 16,
+      "ending_node": 7,
+      "A": 0.2737795093735148
+    },
+    {
+      "starting_node": 6,
+      "ending_node": 13,
+      "A": 0.16371230182255822
+    },
+    {
+      "starting_node": 6,
+      "ending_node": 3,
+      "A": 0.7115095462217361
+    },
+    {
+      "starting_node": 6,
+      "ending_node": 17,
+      "A": 0.7037755310007159
+    },
+    {
+      "starting_node": 15,
+      "ending_node": 3,
+      "A": 0.8983641704678638
+    },
+    {
+      "starting_node": 15,
+      "ending_node": 13,
+      "A": 0.76106568252023
+    },
+    {
+      "starting_node": 15,
+      "ending_node": 36,
+      "A": 0.7350734598860056
+    },
+    {
+      "starting_node": 15,
+      "ending_node": 22,
+      "A": 0.7163528556368869
+    },
+    {
+      "starting_node": 15,
+      "ending_node": 37,
+      "A": 0.2985835387588989
+    },
+    {
+      "starting_node": 15,
+      "ending_node": 19,
+      "A": 0.5154162110324699
+    },
+    {
+      "starting_node": 3,
+      "ending_node": 17,
+      "A": 0.884345716403793
+    },
+    {
+      "starting_node": 3,
+      "ending_node": 13,
+      "A": 0.7924288457514422
+    },
+    {
+      "starting_node": 3,
+      "ending_node": 38,
+      "A": 0.36764026689398394
+    },
+    {
+      "starting_node": 3,
+      "ending_node": 39,
+      "A": 0.7733915139649428
+    },
+    {
+      "starting_node": 13,
+      "ending_node": 19,
+      "A": 0.7039371760807359
+    },
+    {
+      "starting_node": 22,
+      "ending_node": 40,
+      "A": 0.8292443434413902
+    },
+    {
+      "starting_node": 22,
+      "ending_node": 19,
+      "A": 0.06797596734992215
+    },
+    {
+      "starting_node": 19,
+      "ending_node": 4,
+      "A": 0.04283868698154558
+    },
+    {
+      "starting_node": 5,
+      "ending_node": 1,
+      "A": 0.40467871432688957
+    },
+    {
+      "starting_node": 5,
+      "ending_node": 7,
+      "A": 0.35355118341256847
+    },
+    {
+      "starting_node": 5,
+      "ending_node": 20,
+      "A": 0.9218354170575713
+    },
+    {
+      "starting_node": 7,
+      "ending_node": 9,
+      "A": 0.6930200221701089
+    },
+    {
+      "starting_node": 7,
+      "ending_node": 20,
+      "A": 0.9764354396586779
+    },
+    {
+      "starting_node": 9,
+      "ending_node": 20,
+      "A": 0.7458556804496085
+    },
+    {
+      "starting_node": 1,
+      "ending_node": 20,
+      "A": 0.8425711668870506
+    }
+  ],
+  "dependencies": [
+    {
+      "node": 23,
+      "masters": [
+        {
+          "node": 9,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 9,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 24,
+      "masters": [
+        {
+          "node": 18,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 18,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 25,
+      "masters": [
+        {
+          "node": 17,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 17,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 26,
+      "masters": [
+        {
+          "node": 18,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 18,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 27,
+      "masters": [
+        {
+          "node": 17,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 17,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 28,
+      "masters": [
+        {
+          "node": 0,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 0,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 29,
+      "masters": [
+        {
+          "node": 14,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 14,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 30,
+      "masters": [
+        {
+          "node": 1,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 1,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 31,
+      "masters": [
+        {
+          "node": 17,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 17,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 32,
+      "masters": [
+        {
+          "node": 0,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 0,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 33,
+      "masters": [
+        {
+          "node": 4,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 4,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 34,
+      "masters": [
+        {
+          "node": 4,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 4,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 35,
+      "masters": [
+        {
+          "node": 4,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 4,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 36,
+      "masters": [
+        {
+          "node": 1,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 1,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 37,
+      "masters": [
+        {
+          "node": 20,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 20,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 38,
+      "masters": [
+        {
+          "node": 9,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 9,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 39,
+      "masters": [
+        {
+          "node": 20,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 20,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 40,
+      "masters": [
+        {
+          "node": 1,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 1,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    }
+  ],
+  "volume": 25,
+  "defaultYoungsModulus": 30000000000.0
+}

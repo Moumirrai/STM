@@ -11,8 +11,8 @@
 // set page format to a4 and margin to 1cm
 
 
-#let data = json("tri.json")
-#let scal = 1
+#let data = json("simple_truss.json")
+#let scal = 0.5
 
 #canvas(length: 3cm, {
   import draw: *

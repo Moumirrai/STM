@@ -8,26 +8,59 @@ from scipy.spatial import Voronoi
 from structure_parser import DependencyDefinition, EigenstrainDefinition, ElementDefinition, MasterDefinition, NodeDefinition, StructureDefinition
 
 
-def _periodic_dist_sq(x1, y1, x2, y2, width, height):
+def _periodic_dist_sq(x1, y1, x2, y2, width, height, a = 1.0, b = 1.0):
     dx = min(abs(x1 - x2), width - abs(x1 - x2))
     dy = min(abs(y1 - y2), height - abs(y1 - y2))
-    return dx * dx + dy * dy
+    return ((dx * dx)/a) + ((dy * dy)/b)
 
 
-def generateStructure(width, height, num_points, point_radius):
+def generateStructure(width, height, num_points, point_radius, a = 1.0, b = 1.0):
     # --- 1. Place points with minimum periodic separation (hard-disk packing) ---
     base_points = []
     min_dist_sq = (2 * point_radius) ** 2
     attempts = 0
 
-    while len(base_points) < num_points and attempts < 1000:
-        x, y = uniform(0, width), uniform(0, height)
-        if all(_periodic_dist_sq(x, y, px, py, width, height) >= min_dist_sq
-               for px, py in base_points):
-            base_points.append((x, y))
-            attempts = 0
-        else:
-            attempts += 1
+    if min_dist_sq == 0.0:
+        for _ in range(num_points):
+            base_points.append((uniform(0, width), uniform(0, height)))
+    else:
+        min_dist = 2 * point_radius
+        cell_size = min_dist
+        nx = max(1, int(width / cell_size))
+        ny = max(1, int(height / cell_size))
+        grid = {}
+
+        def _cell_index(x, y):
+            # Clamp to avoid right/top edge mapping outside the last cell.
+            ix = min(int(x / cell_size), nx - 1)
+            iy = min(int(y / cell_size), ny - 1)
+            return ix, iy
+
+        while len(base_points) < num_points and attempts < 1000:
+            x, y = uniform(0, width), uniform(0, height)
+            ix, iy = _cell_index(x, y)
+
+            valid = True
+            for dix in (-1, 0, 1):
+                for diy in (-1, 0, 1):
+                    neighbor_key = ((ix + dix) % nx, (iy + diy) % ny)
+                    for point_index in grid.get(neighbor_key, []):
+                        px, py = base_points[point_index]
+                        if _periodic_dist_sq(x, y, px, py, width, height, a, b) < min_dist_sq:
+                            valid = False
+                            break
+                    if not valid:
+                        break
+                if not valid:
+                    break
+
+            if valid:
+                point_index = len(base_points)
+                base_points.append((x, y))
+                grid.setdefault((ix, iy), []).append(point_index)
+                attempts = 0
+            else:
+                attempts += 1
 
     # --- 2. Tile into 3x3 grid so every boundary cell is fully closed ---
     # Each base point is copied to the 8 surrounding tiles plus the base tile itself.
@@ -180,9 +213,9 @@ if __name__ == "__main__REMOVE":
     plt.tight_layout()
     plt.show()
     
-def generate_voronoi_structure(width: float, height: float, num_points: int, point_radius: float) -> StructureDefinition:
-    default_E = 210e9
-    points, members, dependencies = generateStructure(width, height, num_points, point_radius)
+def generate_voronoi_structure(width: float, height: float, num_points: int, point_radius: float, a: float = 1.0, b: float = 1.0) -> StructureDefinition:
+    default_E = 30e9
+    points, members, dependencies = generateStructure(width, height, num_points, point_radius, a, b)
     
     nodes = [NodeDefinition(dx=x, dy=y) for x, y in points]
     
@@ -212,3 +245,16 @@ def generate_voronoi_structure(width: float, height: float, num_points: int, poi
         defaultYoungsModulus=default_E,
         volume=width * height,
     )
+
+def aniotropise(structure: StructureDefinition, xE: float, yE: float) -> StructureDefinition:
+    for element in structure.elements:
+        node_a = structure.nodes[element.starting_node]
+        node_b = structure.nodes[element.ending_node]
+        dx = node_b.dx - node_a.dx
+        dy = node_b.dy - node_a.dy
+        angle = math.atan2(dy, dx)
+        cos_angle = math.cos(angle)
+        sin_angle = math.sin(angle)
+        effective_E = 1 / ((cos_angle ** 2) / xE + (sin_angle ** 2) / yE)
+        element.E = effective_E
+    return structure

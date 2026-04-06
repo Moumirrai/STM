@@ -36,7 +36,7 @@ for eigenstrain in eigenstrainSets:
 
 Ds = np.array(results).T
 
-print(colored(f"D matrix from lagrange solver:\n{Ds}\n", "cyan"))
+#print(colored(f"D matrix from lagrange solver:\n{Ds}\n", "cyan"))
 
 def compute_D(params):
     E, v = params
@@ -62,12 +62,12 @@ result = least_squares(residuals, initial_guess, bounds=bounds)
 fitted_E, fitted_v = result.x
 
 D_fitted = compute_D([fitted_E, fitted_v])
-print(colored(f"Fitted D matrix:\n{D_fitted}\n", "light_green"))
+#print(colored(f"Fitted D matrix:\n{D_fitted}\n", "light_green"))
 
-print(colored(f" E = {fitted_E:.2e} Pa \t v = {fitted_v:.3f} ", "black", "on_light_green"))
-print("")
+#print(colored(f" E = {fitted_E:.2e} Pa \t v = {fitted_v:.3f} ", "black", "on_light_green"))
+#print("")
 # print("Optimization success:", result.success)
-print(colored(f"Final cost: {result.cost}", "light_red"))
+#print(colored(f"Final cost: {result.cost}", "light_red"))
 
 
 

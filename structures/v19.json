@@ -1,0 +1,314 @@
+{
+  "nodes": [
+    {
+      "dx": "4.240759436149869",
+      "dy": "2.224594357110238",
+      "constraints": "xy"
+    },
+    {
+      "dx": "2.472209195427813",
+      "dy": "0.44523834275975005"
+    },
+    {
+      "dx": "0.31766018684706077",
+      "dy": "0.4139084502349477"
+    },
+    {
+      "dx": "2.11614221229077",
+      "dy": "3.5805080193943253"
+    },
+    {
+      "dx": "1.0871683487761357",
+      "dy": "2.0514307483615744"
+    },
+    {
+      "dx": "3.8995102078261046",
+      "dy": "4.127316316920281"
+    },
+    {
+      "dx": "7.11614221229077",
+      "dy": "3.5805080193943253"
+    },
+    {
+      "dx": "3.8995102078261046",
+      "dy": "-0.8726836830797193"
+    },
+    {
+      "dx": "6.087168348776135",
+      "dy": "2.0514307483615744"
+    },
+    {
+      "dx": "5.3176601868470605",
+      "dy": "0.4139084502349477"
+    },
+    {
+      "dx": "6.087168348776135",
+      "dy": "2.0514307483615744"
+    },
+    {
+      "dx": "5.3176601868470605",
+      "dy": "0.4139084502349477"
+    },
+    {
+      "dx": "5.3176601868470605",
+      "dy": "5.413908450234947"
+    },
+    {
+      "dx": "0.31766018684706077",
+      "dy": "5.413908450234947"
+    },
+    {
+      "dx": "2.472209195427813",
+      "dy": "5.44523834275975"
+    }
+  ],
+  "elements": [
+    {
+      "starting_node": 5,
+      "ending_node": 6,
+      "A": 0.21112716084415672
+    },
+    {
+      "starting_node": 1,
+      "ending_node": 7,
+      "A": 1.5606380146891141
+    },
+    {
+      "starting_node": 0,
+      "ending_node": 8,
+      "A": 1.888259779409866
+    },
+    {
+      "starting_node": 0,
+      "ending_node": 5,
+      "A": 2.0537025128233717
+    },
+    {
+      "starting_node": 0,
+      "ending_node": 9,
+      "A": 1.4036463539179709
+    },
+    {
+      "starting_node": 0,
+      "ending_node": 1,
+      "A": 1.7318626327609745
+    },
+    {
+      "starting_node": 0,
+      "ending_node": 3,
+      "A": 1.1044569297481417
+    },
+    {
+      "starting_node": 0,
+      "ending_node": 4,
+      "A": 0.08320551243106737
+    },
+    {
+      "starting_node": 5,
+      "ending_node": 10,
+      "A": 0.2616382799080012
+    },
+    {
+      "starting_node": 1,
+      "ending_node": 11,
+      "A": 0.24003839553964992
+    },
+    {
+      "starting_node": 5,
+      "ending_node": 12,
+      "A": 2.382486772073104
+    },
+    {
+      "starting_node": 5,
+      "ending_node": 3,
+      "A": 1.441745665469642
+    },
+    {
+      "starting_node": 3,
+      "ending_node": 13,
+      "A": 1.272827911523571
+    },
+    {
+      "starting_node": 3,
+      "ending_node": 4,
+      "A": 2.656919177863479
+    },
+    {
+      "starting_node": 3,
+      "ending_node": 14,
+      "A": 1.4576653099209327
+    },
+    {
+      "starting_node": 2,
+      "ending_node": 4,
+      "A": 1.4171263942461185
+    },
+    {
+      "starting_node": 2,
+      "ending_node": 1,
+      "A": 1.228147795070586
+    },
+    {
+      "starting_node": 4,
+      "ending_node": 1,
+      "A": 1.693725077337508
+    }
+  ],
+  "dependencies": [
+    {
+      "node": 6,
+      "masters": [
+        {
+          "node": 3,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 3,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 7,
+      "masters": [
+        {
+          "node": 5,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 5,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 8,
+      "masters": [
+        {
+          "node": 4,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 4,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 9,
+      "masters": [
+        {
+          "node": 2,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 2,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 10,
+      "masters": [
+        {
+          "node": 4,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 4,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 11,
+      "masters": [
+        {
+          "node": 2,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 2,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 12,
+      "masters": [
+        {
+          "node": 2,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 2,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 13,
+      "masters": [
+        {
+          "node": 2,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 2,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    },
+    {
+      "node": 14,
+      "masters": [
+        {
+          "node": 1,
+          "direction": "x",
+          "factor": 1.0,
+          "eigenstrain": true
+        },
+        {
+          "node": 1,
+          "direction": "y",
+          "factor": 1.0,
+          "eigenstrain": true
+        }
+      ]
+    }
+  ],
+  "volume": 25,
+  "defaultYoungsModulus": 30000000000.0
+}

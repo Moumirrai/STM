@@ -2,7 +2,7 @@ import numpy as np
 from models import TrussData
 from solver_debug import TrussSolver
 from structure_parser import parse_json_file
-from plotter import plot_deformed_structure
+from plotter import plot_deformed_structure, export_vtk, plot_deformed_structure_black
 
 np.set_printoptions(
     linewidth=250,
@@ -21,4 +21,5 @@ truss: TrussData = parse_json_file(f"./structures/v{json_number}.json", explicit
 solver = TrussSolver(truss)
 
 res = solver.solve()
-plot_deformed_structure(truss, tiled=False)
+plot_deformed_structure_black(truss, tiled=True)
+export_vtk(truss)

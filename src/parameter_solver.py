@@ -53,10 +53,10 @@ def solveParameters_iso(structure: StructureDefinition | str):
     result = least_squares(residuals, initial_guess, bounds=bounds)
     fitted_E, fitted_v = result.x
     
-    print(colored(f"D matrix from DOF elimination solver:\n{Ds}\n", "cyan"))
+    #print(colored(f"D matrix from DOF elimination solver:\n{Ds}\n", "cyan"))
     
     D_fitted = compute_D([fitted_E, fitted_v])
-    print(colored(f"Fitted D matrix:\n{D_fitted}\n", "light_green"))
+    #print(colored(f"Fitted D matrix:\n{D_fitted}\n", "light_green"))
 
     """ print(colored(f"D matrix from DOF elimination solver:\n{Ds}\n", "cyan"))
 
@@ -72,14 +72,14 @@ def solveParameters_iso(structure: StructureDefinition | str):
     # print("Optimization success:", result.success)
     print(colored(f"Final cost: {result.cost}", "light_red"))
  """
-    print(f" Fitted parameters: ", end="")
-    print(
-        colored(
-            f" E = {fitted_E:.2e} Pa \t v = {fitted_v:.3f} ",
-            "black",
-            "on_light_green",
-        )
-    )
+    #print(f" Fitted parameters: ", end="")
+    #print(
+    #    colored(
+    #        f" E = {fitted_E:.2e} Pa \t v = {fitted_v:.3f} ",
+    #        "black",
+    #        "on_light_green",
+    #    )
+    #)
     return fitted_E, fitted_v
 
 

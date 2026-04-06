@@ -1,0 +1,27 @@
+{
+  "$schema": "./input.schema.json",
+  "nodes": [
+    { "dx": "-4", "dy": "0"},
+    { "dx": "-2", "dy": "0", "constraints": "xy"},
+    { "dx": "0", "dy": "0", "constraints": "y" },
+    { "dx": "2", "dy": "0"},
+    { "dx": "1", "dy": "-1.5", "loads": {"y": 100 }},
+    { "dx": "-1", "dy": "-1.5"},
+    { "dx": "-3", "dy": "-1.5" }
+  ],
+  "dependencies": [
+  ],
+  "elements": [
+    { "starting_node": 0, "ending_node": 1 },
+    { "starting_node": 1, "ending_node": 2 },
+    { "starting_node": 2, "ending_node": 3 },
+    { "starting_node": 4, "ending_node": 5 },
+    { "starting_node": 5, "ending_node": 6 },
+    { "starting_node": 0, "ending_node": 6 },
+    { "starting_node": 1, "ending_node": 6 },
+    { "starting_node": 5, "ending_node": 1 },
+    { "starting_node": 5, "ending_node": 2 },
+    { "starting_node": 4, "ending_node": 3 },
+    { "starting_node": 4, "ending_node": 2 }
+  ]
+}

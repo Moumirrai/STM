@@ -171,7 +171,7 @@ def plot_deformed_structure(truss: TrussData, scale: float = 1, tiled: bool = Fa
         x = node.dx + deltax
         y = node.dy + deltay
         deformed_positions[node.index] = (x, y)
-        print(colored(f"Node {node.index}: Original ({node.dx}, {node.dy}), Deformed by ({deltax}, {deltay})", "cyan"))
+        #print(colored(f"Node {node.index}: Original ({node.dx}, {node.dy}), Deformed by ({deltax}, {deltay})", "cyan"))
 
     # Get axial forces for coloring
     forces = [element.axial_force() for element in truss.elements]
@@ -228,6 +228,85 @@ def plot_deformed_structure(truss: TrussData, scale: float = 1, tiled: bool = Fa
             x2, y2 = deformed_positions[n2.index]
             color = cmap(norm(force))
             ax.plot([x1 + xoff, x2 + xoff], [y1 + yoff, y2 + yoff], color=color, alpha=alpha, linewidth=2)
+
+    # Add colorbar
+    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    sm.set_array([])
+    cbar = plt.colorbar(sm, ax=ax)
+    cbar.set_label('Axial Force')
+
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_title('Deformed Structure' + (' (3x3 Tiled)' if tiled else ''))
+    ax.axis('equal')
+    plt.show()
+    
+def plot_deformed_structure_black(truss: TrussData, scale: float = 1, tiled: bool = False, tile_opacity: float = 0.25, original: bool = False):
+    # Compute deformed positions
+    deformed_positions: dict[int, tuple[float, float]] = {}
+    for node in truss.nodes:
+        deltax = node.local_deformations[0] * scale if node.local_deformations is not None else 0.0
+        deltay = node.local_deformations[1] * scale if node.local_deformations is not None else 0.0
+        x = node.dx + deltax
+        y = node.dy + deltay
+        deformed_positions[node.index] = (x, y)
+        #print(colored(f"Node {node.index}: Original ({node.dx}, {node.dy}), Deformed by ({deltax}, {deltay})", "cyan"))
+
+    # Get axial forces for coloring
+    forces = [element.axial_force() for element in truss.elements]
+    
+    #print(colored(f"Axial forces for coloring: {forces}", "yellow"))
+
+    if not forces:
+        print(colored("No elements found. Nothing to plot.", "red"))
+        return
+
+    # Normalize forces for colormap
+    min_force = min(forces)
+    max_force = max(forces)
+    if min_force == max_force:
+        # Keep a tiny range so colormap normalization is well-defined.
+        min_force -= 1e-12
+        max_force += 1e-12
+    norm = Normalize(vmin=min_force, vmax=max_force)
+    cmap = plt.get_cmap('viridis')
+
+    fig, ax = plt.subplots()
+
+    if tiled:
+        before_v1, before_v2, after_v1, after_v2 = _select_tile_vectors(truss, deformed_positions)
+        print(
+            colored(
+                f"Tile vectors - before: {tuple(before_v1)}, {tuple(before_v2)} | after: {tuple(after_v1)}, {tuple(after_v2)}",
+                "green",
+            )
+        )
+
+        tile_offsets: list[tuple[float, float, float]] = []
+        for iy in (-1, 0, 1):
+            for ix in (-1, 0, 1):
+                shift = ix * after_v1 + iy * after_v2
+                alpha = 1.0 if ix == 0 and iy == 0 else tile_opacity
+                tile_offsets.append((shift[0], shift[1], alpha))
+    else:
+        tile_offsets = [(0.0, 0.0, 1.0)]
+
+    # Plot undeformed structure in background
+    if original:
+        for element in truss.elements:
+            n1, n2 = element.nodes
+            x1, y1 = n1.dx, n1.dy
+            x2, y2 = n2.dx, n2.dy
+            ax.plot([x1, x2], [y1, y2], color='black', alpha=0.35, linewidth=2)
+
+    # Plot each element with color based on axial force
+    for xoff, yoff, alpha in tile_offsets:
+        for element, force in zip(truss.elements, forces):
+            n1, n2 = element.nodes
+            x1, y1 = deformed_positions[n1.index]
+            x2, y2 = deformed_positions[n2.index]
+            color = cmap(norm(force))
+            ax.plot([x1 + xoff, x2 + xoff], [y1 + yoff, y2 + yoff], color='black', alpha=alpha, linewidth=2)
 
     # Add colorbar
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)

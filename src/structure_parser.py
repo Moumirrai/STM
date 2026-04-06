@@ -189,9 +189,9 @@ def parse_structure_data(definition: StructureDefinition, explicitEigenStrain: O
                 master_node = nodes[master_def.node]
 
                 if direction == 0:  # x direction
-                    node.eigenstrain[0] += -1 * ((master_node.dx - node.dx) * eigenstrain_vector[0] + math.tan(eigenstrain_vector[2])/2 * (master_node.dy - node.dy))
+                    node.eigenstrain[0] += -1 * ((master_node.dx - node.dx) * eigenstrain_vector[0] + eigenstrain_vector[2]/2 * (master_node.dy - node.dy))
                 else:  # y direction
-                    node.eigenstrain[1] += -1 * ((master_node.dy - node.dy) * eigenstrain_vector[1] + math.tan(eigenstrain_vector[2])/2 * (master_node.dx - node.dx))
+                    node.eigenstrain[1] += -1 * ((master_node.dy - node.dy) * eigenstrain_vector[1] + eigenstrain_vector[2]/2 * (master_node.dx - node.dx))
 
             master_nodes = MasterNode(
                 nodeIndex=master_def.node,
