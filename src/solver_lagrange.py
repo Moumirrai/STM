@@ -146,6 +146,6 @@ class LagrangeTrussSolver:
             [
                 result[0, 0],  # xx
                 result[1, 1],  # yy
-                result[0, 1] * 2,  # xy
+                result[0, 1],  # xy
             ]
         )
