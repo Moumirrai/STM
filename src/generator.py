@@ -168,16 +168,15 @@ def create_tie_structure_angle(
     ]
     
     elements = [
-        #ElementDefinition(starting_node=0, ending_node=1),
-        ElementDefinition(starting_node=2, ending_node=3),
+        ElementDefinition(starting_node=0, ending_node=1, A=default_A * 0.5),
+        ElementDefinition(starting_node=2, ending_node=3, A=default_A * 0.5),
         ElementDefinition(starting_node=0, ending_node=4),
         ElementDefinition(starting_node=2, ending_node=4),
         # 4-5 and 5-6 represent the same periodic ligament across a tile seam.
         # Split area so the pair contributes one effective member stiffness.
-        ElementDefinition(starting_node=4, ending_node=5, A=default_A * 0.5),
         ElementDefinition(starting_node=1, ending_node=5),
         ElementDefinition(starting_node=3, ending_node=5),
-        ElementDefinition(starting_node=5, ending_node=6, A=default_A * 0.5)
+        ElementDefinition(starting_node=5, ending_node=6)
     ]
     
     dependencies = [
