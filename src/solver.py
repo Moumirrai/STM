@@ -3,6 +3,7 @@ from scipy.sparse import bmat, identity, lil_matrix
 from scipy.sparse.linalg import spsolve
 
 from models import TrussData
+from utils import print_typst_matrix
 
 
 class TrussSolver:
@@ -200,7 +201,9 @@ class TrussSolver:
             - XD1.T @ f_D
         )
 
-        print(raw_K_matrix.todense())
+        # print(raw_K_matrix.todense())
+
+        print_typst_matrix(raw_K_matrix.toarray(), multiplier=0.01)
 
         u_free_solved = spsolve(assembled_K, assembled_F)
 
